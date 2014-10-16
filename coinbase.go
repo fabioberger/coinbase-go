@@ -119,3 +119,14 @@ func (c Client) GenerateReceiveAddress(callback string, label string) (string, e
 	}
 	return holder["address"].(string), nil
 }
+
+// func (c Client) sendMoney(to string, amount float64, notes string, userFee float64, amountCurrency string) ([]byte, error) {
+// 	params := map[string]interface{}{
+// 		"transaction[to]": to,
+// 	}
+
+// 	if(amountCurrency != "") {
+
+// 	}
+
+// }

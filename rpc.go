@@ -2,9 +2,6 @@ package coinbase
 
 import (
 	"bytes"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -14,8 +11,9 @@ import (
 	"time"
 )
 
+// Rpc handles the remote procedure call requests
 type Rpc struct {
-	auth   Authentication
+	auth   Authenticator
 	client http.Client
 }
 
@@ -59,17 +57,8 @@ func (r Rpc) createRequest(method string, endpoint string, params map[string]int
 		return nil, err
 	}
 
-	// Find auth type and include its http payload
-	auth, isApiKey := r.auth.(ApiKeyAuthentication)
-	if isApiKey {
-		req.Header.Set("ACCESS_KEY", auth.Key)
-
-		h := hmac.New(sha256.New, []byte(auth.Secret))
-		h.Write([]byte(message))
-		signature := hex.EncodeToString(h.Sum(nil))
-		req.Header.Set("ACCESS_SIGNATURE", signature)
-		req.Header.Set("ACCESS_NONCE", nonce)
-	}
+	// Authenticate the request
+	r.auth.Authenticate(req, message, nonce)
 
 	req.Header.Set("User-Agent", "CoinbasePHP/v1")
 	req.Header.Set("Content-Type", "application/json")

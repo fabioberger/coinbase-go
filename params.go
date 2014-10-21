@@ -38,7 +38,7 @@ type TransactionParams struct {
 
 type ButtonParams struct {
 	Account_id string  `json:"account_id,omitempty"`
-	Button     *Button `json:"button,omitempty"`
+	Button     *button `json:"button,omitempty"`
 }
 
 type ContactsParams struct {
@@ -47,18 +47,18 @@ type ContactsParams struct {
 	Query string `json:"query,omitempty"`
 }
 
-type Currency struct {
+type currency struct {
 	Name string `json:"name,omitempty"`
 	Iso  string `json:"iso,omitempty"`
 }
 
-type Contact struct {
+type contact struct {
 	Contact struct {
 		Email string `json:"email,omitempty"`
 	} `json:"contact,omitempty"`
 }
 
-type Button struct {
+type button struct {
 	Name                  string `json:"name,omitempty"`
 	Price_string          string `json:"price_string,omitempty"`
 	Price_currency_iso    string `json:"price_currency_iso,omitempty"`
@@ -87,26 +87,26 @@ type Button struct {
 	Price4                string `json:"price4,omitempty"`
 	Price5                string `json:"price5,omitempty"`
 	Code                  string `json:"code,omitempty"`
-	Price                 Fee    `json:"price,omitempty"`
+	Price                 fee    `json:"price,omitempty"`
 	Id                    string `json:"id,omitempty"`
 }
 
-type User struct {
+type user struct {
 	Id              string   `json:"id,omitempty"`
 	Name            string   `json:"name,omitempty"`
 	Email           string   `json:"email,omitempty"`
 	Receive_address string   `json:"receive_address,omitempty"`
 	Time_zone       string   `json:"timezone,omitempty"`
 	Native_currency string   `json:"native_currency,omitempty"`
-	Balance         Amount   `json:"balance,omitempty"`
-	Merchant        Merchant `json:"merchant,omitempty"`
+	Balance         amount   `json:"balance,omitempty"`
+	Merchant        merchant `json:"merchant,omitempty"`
 	Buy_level       int      `json:"buy_level,omitempty"`
 	Sell_level      int      `json:"sell_level,omitempty"`
-	Buy_limit       Amount   `json:"buy_limit,omitempty"`
-	Sell_limit      Amount   `json:"sell_limit,omitempty"`
+	Buy_limit       amount   `json:"buy_limit,omitempty"`
+	Sell_limit      amount   `json:"sell_limit,omitempty"`
 }
 
-type Merchant struct {
+type merchant struct {
 	Company_name string `json:"company_name,omitempty"`
 	Logo         struct {
 		Small  string `json:"small,omitempty"`
@@ -115,7 +115,7 @@ type Merchant struct {
 	} `json:"logo,omitempty"`
 }
 
-type Oauth struct {
+type oauth struct {
 	Access_token  string `json:"access_token,omitempty"`
 	Token_type    string `json:"token_type,omitempty"`
 	Expires_in    int    `json:"expires_in,omitempty"`
@@ -123,53 +123,53 @@ type Oauth struct {
 	Scope         string `json:"scope,omitempty"`
 }
 
-type Transfer struct {
+type transfer struct {
 	Id             string `json:"id,omitempty"`
 	Type           string `json:"type,omitempty"`
 	Code           string `json:"code,omitempty"`
 	Created_at     string `json:"created_at,omitempty"`
-	Fees           Fees   `json:"fees,omitempty"`
+	Fees           fees   `json:"fees,omitempty"`
 	Status         string `json:"status,omitempty"`
 	Payout_date    string `json:"payout_date,omitempty"`
-	Btc            Amount `json:"btc,omitempty"`
-	Subtotal       Amount `json:"subtotal,omitempty"`
-	Total          Amount `json:"total,omitempty"`
+	Btc            amount `json:"btc,omitempty"`
+	Subtotal       amount `json:"subtotal,omitempty"`
+	Total          amount `json:"total,omitempty"`
 	Description    string `json:"description,omitempty"`
 	Transaction_id string `json:"transaction_id,omitempty"`
 }
 
-type Amount struct {
+type amount struct {
 	Amount   string `json:"amount,omitempty"`
 	Currency string `json:"currency,omitempty"`
 }
 
-type Fee struct {
+type fee struct {
 	Cents        int    `json:"cents,omitempty"`
 	Currency_iso string `json:"currency_iso,omitempty"`
 }
 
-type Fees struct {
-	Coinbase Fee `json:"coinbase,omitempty"`
-	Bank     Fee `json:"bank,omitempty"`
+type fees struct {
+	Coinbase fee `json:"coinbase,omitempty"`
+	Bank     fee `json:"bank,omitempty"`
 }
 
-type TransactionActor struct {
+type transactionActor struct {
 	Id    string `json:"id,omitempty"`
 	Name  string `json:"name,omitempty"`
 	Email string `json:"email,omitempty"`
 }
 
-type Transaction struct {
+type transaction struct {
 	Id                  string           `json:"id,omitempty"`
 	Create_at           string           `json:"create_at,omitempty"`
 	Hsh                 string           `json:"hsh,omitempty"`
 	Notes               string           `json:"notes,omitempty"`
 	Idem                string           `json:"idem,omitempty"`
-	Amount              Amount           `json:"amount,omitempty"`
+	Amount              amount           `json:"amount,omitempty"`
 	Request             bool             `json:"request,omitempty"`
 	Status              string           `json:"status,omitempty"`
-	Sender              TransactionActor `json:"sender,omitempty"`
-	Recipient           TransactionActor `json:"recipient,omitempty"`
+	Sender              transactionActor `json:"sender,omitempty"`
+	Recipient           transactionActor `json:"recipient,omitempty"`
 	Recipient_address   string           `json:"recipient_address,omitempty"`
 	Type                string           `json:"type,omitempty"`
 	Signed              bool             `json:"signed,omitempty"`
@@ -180,14 +180,14 @@ type Transaction struct {
 	Confirmations       int              `json:"confirmations,omitempty"`
 }
 
-type Order struct {
+type order struct {
 	Id              string      `json:"id,omitempty"`
 	Created_at      string      `json:"created_at,omitempty"`
 	Status          string      `json:"status,omitempty"`
-	Total_btc       Fee         `json:"total_btc,omitempty"`
-	Total_native    Fee         `json:"total_native,omitempty"`
+	Total_btc       fee         `json:"total_btc,omitempty"`
+	Total_native    fee         `json:"total_native,omitempty"`
 	Custom          string      `json:"custom,omitempty"`
 	Receive_address string      `json:"receive_address,omitempty"`
-	Button          Button      `json:"button,omitempty"`
-	Transaction     Transaction `json:"transaction,omitempty"`
+	Button          button      `json:"button,omitempty"`
+	Transaction     transaction `json:"transaction,omitempty"`
 }

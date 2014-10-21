@@ -205,16 +205,16 @@ func (c Client) GetContacts(params *ContactsParams) (*contactsHolder, error) {
 	return &holder, nil
 }
 
-func (c Client) GetCurrencies() ([]Currency, error) {
+func (c Client) GetCurrencies() ([]currency, error) {
 	holder := [][]string{}
 	if err := c.Get("currencies", nil, &holder); err != nil {
 		return nil, err
 	}
-	finalData := []Currency{}
-	for _, currency := range holder {
-		class := Currency{
-			Name: currency[0],
-			Iso:  currency[1],
+	finalData := []currency{}
+	for _, curr := range holder {
+		class := currency{
+			Name: curr[0],
+			Iso:  curr[1],
 		}
 		finalData = append(finalData, class)
 	}
@@ -294,7 +294,7 @@ func (c Client) getPrice(kind string, qty int) (*pricesHolder, error) {
 	return &holder, nil
 }
 
-func (c Client) GetTransaction(id string) (*Transaction, error) {
+func (c Client) GetTransaction(id string) (*transaction, error) {
 	holder := transactionHolder{}
 	if err := c.Get("transactions/"+id, nil, &holder); err != nil {
 		return nil, err
@@ -302,7 +302,7 @@ func (c Client) GetTransaction(id string) (*Transaction, error) {
 	return &holder.Transaction, nil
 }
 
-func (c Client) GetOrder(id string) (*Order, error) {
+func (c Client) GetOrder(id string) (*order, error) {
 	holder := orderHolder{}
 	if err := c.Get("orders/"+id, nil, &holder); err != nil {
 		return nil, err
@@ -310,7 +310,7 @@ func (c Client) GetOrder(id string) (*Order, error) {
 	return &holder.Order, nil
 }
 
-func (c Client) GetUser() (*User, error) {
+func (c Client) GetUser() (*user, error) {
 	holder := usersHolder{}
 	if err := c.Get("users", nil, &holder); err != nil {
 		return nil, err

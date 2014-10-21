@@ -58,7 +58,7 @@ func TestGetAllAddressesEndpoint(t *testing.T) {
 func TestGetButton(t *testing.T) {
 	c := initClient()
 	params := &ButtonParams{
-		Button: &Button{
+		Button: &button{
 			Name:               "test",
 			Type:               "buy_now",
 			Subscription:       false,

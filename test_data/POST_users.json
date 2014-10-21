@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "errors": [
+    "Email is already taken"
+  ],
+  "user": {
+    "id": "501a3d9ef8182b2754000018",
+    "name": "New User",
+    "email": "newuser@example.com",
+    "receive_address": null
+  }
+}

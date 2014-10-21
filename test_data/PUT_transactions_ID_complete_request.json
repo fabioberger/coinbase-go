@@ -1,0 +1,20 @@
+{
+  "success": false,
+  "errors": [
+    "Only the sender can complete a money request."
+  ],
+  "transaction": {
+    "id": "503c46a3f8182b106500009b",
+    "created_at": null,
+    "hsh": null,
+    "notes": null,
+    "amount": {
+      "amount": "0.00000000",
+      "currency": "BTC"
+    },
+    "request": false,
+    "status": "pending",
+    "recipient": null,
+    "sender": null
+  }
+}

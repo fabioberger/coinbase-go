@@ -8,7 +8,7 @@ This library supports both the [API key authentication method](https://coinbase.
 
 Obtain the latest version of the Coinbase Go library with:
 
-    git clone https://github.com/fabioberger/coinbase-go
+    go get github.com/fabioberger/coinbase-go
 
 Then, add the following to your Go project:
 

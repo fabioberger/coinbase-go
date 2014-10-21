@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "transaction": {
+    "id": "501a3554f8182b2754000003",
+    "created_at": "2012-08-02T01:07:48-07:00",
+    "hsh": null,
+    "notes": "Sample request for you!",
+    "amount": {
+      "amount": "1.23400000",
+      "currency": "BTC"
+    },
+    "request": true,
+    "status": "pending",
+    "sender": {
+      "id": "5011f33df8182b142400000a",
+      "name": "User One",
+      "email": "user1@example.com"
+    },
+    "recipient": {
+      "id": "5011f33df8182b142400000e",
+      "name": "User Two",
+      "email": "user2@example.com"
+    }
+  }
+}

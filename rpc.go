@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -15,6 +17,7 @@ import (
 type Rpc struct {
 	auth   Authenticator
 	client http.Client
+	mock   bool
 }
 
 // dialTimeout is used to enforce a timeout for all http requests.
@@ -23,36 +26,41 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 	return net.DialTimeout(network, addr, timeout)
 }
 
-func (r Rpc) Request(method string, endpoint string, params map[string]interface{}) ([]byte, error) {
+func (r Rpc) Request(method string, endpoint string, params interface{}, holder interface{}) error {
 
-	request, err := r.createRequest(method, endpoint, params)
+	jsonParams, err := json.Marshal(params)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	data, err := r.executeRequest(request)
 
-	return data, err
+	request, err := r.createRequest(method, endpoint, jsonParams)
+	if err != nil {
+		return err
+	}
+
+	var data []byte
+	if r.mock == true {
+		data, err = r.simulateRequest(endpoint, method)
+	} else {
+		data, err = r.executeRequest(request)
+	}
+
+	if err := json.Unmarshal(data, &holder); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// CreateRequest formats a request with all the necessary authenticated headers
-func (r Rpc) createRequest(method string, endpoint string, params map[string]interface{}) (*http.Request, error) {
-
-	if params == nil {
-		params = map[string]interface{}{}
-	}
+// CreateRequest formats a request with all the necessary headers
+func (r Rpc) createRequest(method string, endpoint string, params []byte) (*http.Request, error) {
 
 	nonce := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	endpoint = API_BASE + endpoint
 
-	// Convert params payload to json
-	payloadJson, err := json.Marshal(params)
-	if err != nil {
-		return nil, err
-	}
+	message := nonce + endpoint + string(params) //Needed for HMAC Signature
 
-	message := nonce + endpoint + string(payloadJson) //Needed for HMAC Signature
-
-	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(payloadJson))
+	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(params))
 	if err != nil {
 		return nil, err
 	}
@@ -85,4 +93,15 @@ func (r Rpc) executeRequest(req *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("%s %s failed. Response code was %s", req.Method, req.URL, resp.Status)
 	}
 	return bytes, nil
+}
+
+// Simulate a request by returning a sample JSON from file
+func (r Rpc) simulateRequest(endpoint string, method string) ([]byte, error) {
+	fileName := strings.Replace(endpoint, "/", "_", -1)
+	filePath := "test_data/" + method + "_" + fileName + ".json"
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

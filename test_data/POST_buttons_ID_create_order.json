@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "order": {
+    "id": "7RTTRDVP",
+    "created_at": "2013-11-09T22:47:10-08:00",
+    "status": "new",
+    "total_btc": {
+      "cents": 100000000,
+      "currency_iso": "BTC"
+    },
+    "total_native": {
+      "cents": 100000000,
+      "currency_iso": "BTC"
+    },
+    "custom": "Order123",
+    "receive_address": "mgrmKftH5CeuFBU3THLWuTNKaZoCGJU5jQ",
+    "button": {
+      "type": "buy_now",
+      "name": "test",
+      "description": "Sample description",
+      "id": "93865b9cae83706ae59220c013bc0afd"
+    },
+    "transaction": null
+  }
+}

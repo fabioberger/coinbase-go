@@ -1,0 +1,33 @@
+{
+  "addresses": [
+    {
+      "address": {
+        "address": "moLxGrqWNcnGq4A8Caq8EGP4n9GUGWanj4",
+        "callback_url": null,
+        "label": "My Label",
+        "created_at": "2013-05-09T23:07:08-07:00"
+      }
+    },
+    {
+      "address": {
+        "address": "mwigfecvyG4MZjb6R5jMbmNcs7TkzhUaCj",
+        "callback_url": null,
+        "label": null,
+        "created_at": "2013-05-09T17:50:37-07:00"
+      }
+    },
+    {
+      "address": {
+        "address": "2N139JFn7dwX1ySkdWYDXCV51oyBCuV8zYw",
+        "callback_url": null,
+        "label": null,
+        "created_at": "2013-05-09T17:50:37-07:00",
+        "type": "p2sh",
+        "redeem_script": "524104c6e3f151b7d0ca7a63c6090c1eb86fd2cbfce43c367b5b36553ba28ade342b9dd8590f48abd48aa0160babcabfdccc6529609d2f295b3165e724de2f15adca9d410434cca255243e36de58f628b0f462518168b9c97b408f92ea9e01e168c70c003398bbf9b4c5cb9344f00c7cebf40322405f9b063eb4d2da25e710759aa51301eb4104624c024547a858b898bfe0b89c4281d743303da6d9ad5fc2f82228255586a9093011a540acae4bdf77ce427c0cb9b482918093e677238800fc0f6fae14f6712853ae"
+      }
+    }
+  ],
+  "total_count": 3,
+  "num_pages": 1,
+  "current_page": 1
+}

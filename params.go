@@ -1,5 +1,10 @@
 package coinbase
 
+// Params includes all the struct parameters that are required for specific API requests
+// By defining a specific param struct, a developer can know which parameters are allowed
+// for a given request. Also included here are the return object structs returned by
+// specific API calls
+
 type AddressesParams struct {
 	Page       int    `json:"page,omitempty"`
 	Limit      int    `json:"limit,omitempty"`
@@ -47,6 +52,31 @@ type ContactsParams struct {
 	Query string `json:"query,omitempty"`
 }
 
+type oauthTokens struct {
+	Access_token  string
+	Refresh_token string
+	Expire_time   int64
+}
+
+type transactionConfirmation struct {
+	Transaction transaction
+	Transfer    transfer
+}
+
+type addresses struct {
+	Total_count  int
+	Num_pages    int
+	Current_page int
+	Addresses    []address
+}
+
+type address struct {
+	Address      string `json:"address,omitempty"`
+	Callback_url string `json:"callback_url,omitempty"`
+	Label        string `json:"label,omitempty"`
+	Created_at   string `json:"created_at,omitempty"`
+}
+
 type currency struct {
 	Name string `json:"name,omitempty"`
 	Iso  string `json:"iso,omitempty"`
@@ -89,6 +119,7 @@ type button struct {
 	Code                  string `json:"code,omitempty"`
 	Price                 fee    `json:"price,omitempty"`
 	Id                    string `json:"id,omitempty"`
+	Embed_html            string `json:"embed_html"` //Added embed_html for convenience
 }
 
 type user struct {
@@ -121,6 +152,17 @@ type oauth struct {
 	Expires_in    int    `json:"expires_in,omitempty"`
 	Refresh_token string `json:"refresh_token,omitempty"`
 	Scope         string `json:"scope,omitempty"`
+}
+
+type PaginationStats struct {
+	Total_count  int `json:"total_count,omitempty"`
+	Num_pages    int `json:"num_pages,omitempty"`
+	Current_page int `json:"current_page,omitempty"`
+}
+
+type transfers struct {
+	PaginationStats
+	Transfers []transfer
 }
 
 type transfer struct {
@@ -159,6 +201,11 @@ type transactionActor struct {
 	Email string `json:"email,omitempty"`
 }
 
+type transactions struct {
+	PaginationStats
+	Transactions []transaction
+}
+
 type transaction struct {
 	Id                  string           `json:"id,omitempty"`
 	Create_at           string           `json:"create_at,omitempty"`
@@ -178,6 +225,11 @@ type transaction struct {
 	Signatures_needed   int              `json:"signatures_needed,omitempty"`
 	Hash                string           `json:"hash,omitempty"`
 	Confirmations       int              `json:"confirmations,omitempty"`
+}
+
+type orders struct {
+	PaginationStats
+	Orders []order
 }
 
 type order struct {

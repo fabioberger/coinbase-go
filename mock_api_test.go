@@ -13,13 +13,19 @@ func initTestClient() Client {
 	return ApiKeyClientTest(os.Getenv("COINBASE_KEY"), os.Getenv("COINBASE_SECRET"))
 }
 
+// About Mock Tests:
+// All Mock Tests simulate requests to the coinbase API by returning the expected
+// return values from a file under the test_data folder. The values received from
+// the file are compared with the expected value given the marshaling of the JSON
+// executed correctly.
+
 func TestGetBalanceParse(t *testing.T) {
 	c := initTestClient()
 	amount, err := c.GetBalance()
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetBalanceParse", "36.62800000", amount)
+	compareFloat(t, "GetBalanceParse", 36.62800000, amount)
 }
 
 func TestGetReceiveAddressParse(t *testing.T) {
@@ -41,9 +47,22 @@ func TestGetAllAddressesParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetAllAddressesParse", "2013-05-09T23:07:08-07:00", addresses.Addresses[0].Address.Created_at)
-	compareString(t, "GetAllAddressesParse", "mwigfecvyG4MZjb6R5jMbmNcs7TkzhUaCj", addresses.Addresses[1].Address.Address)
+	compareString(t, "GetAllAddressesParse", "2013-05-09T23:07:08-07:00", addresses.Addresses[0].Created_at)
+	compareString(t, "GetAllAddressesParse", "mwigfecvyG4MZjb6R5jMbmNcs7TkzhUaCj", addresses.Addresses[1].Address)
 	compareInt(t, "GetAllAddressesParse", 1, int64(addresses.Num_pages))
+}
+
+func TestGetButtonParse(t *testing.T) {
+	c := initTestClient()
+	params := &ButtonParams{
+		Button: &button{},
+	}
+	data, err := c.GetButton(params)
+	if err != nil {
+		log.Fatal(err)
+	}
+	compareString(t, "GetButtonParse", "93865b9cae83706ae59220c013bc0afd", data.Code)
+	compareString(t, "GetButtonParse", "Sample description", data.Description)
 }
 
 func TestSendMoneyParse(t *testing.T) {
@@ -55,7 +74,6 @@ func TestSendMoneyParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "SendMoneyParse", true, data.Success)
 	compareString(t, "SendMoneyParse", "-1.23400000", data.Transaction.Amount.Amount)
 	compareString(t, "SendMoneyParse", "37muSN5ZrukVTvyVh3mT5Zc5ew9L9CBare", data.Transaction.Recipient_address)
 }
@@ -69,7 +87,6 @@ func TestRequestMoneyParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "RequestMoneyParse", true, data.Success)
 	compareString(t, "RequestMoneyParse", "1.23400000", data.Transaction.Amount.Amount)
 	compareString(t, "RequestMoneyParse", "5011f33df8182b142400000e", data.Transaction.Recipient.Id)
 }
@@ -99,7 +116,7 @@ func TestCompleteRequestParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "CancelRequestParse", false, data.Success)
+	compareString(t, "CancelRequestParse", "503c46a3f8182b106500009b", data.Transaction.Id)
 }
 
 func TestCreateOrderFromButtonCodeParse(t *testing.T) {
@@ -108,8 +125,8 @@ func TestCreateOrderFromButtonCodeParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "CreateOrderFromButtonCodeParse", true, data.Success)
-	compareString(t, "CreateOrderFromButtonCodeParse", "new", data.Order.Status)
+	compareString(t, "CreateOrderFromButtonCodeParse", "7RTTRDVP", data.Id)
+	compareString(t, "CreateOrderFromButtonCodeParse", "new", data.Status)
 }
 
 func TestCreateUserParse(t *testing.T) {
@@ -118,21 +135,19 @@ func TestCreateUserParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "CreateUser", false, data.Success)
-	compareString(t, "CreateUser", "Email is already taken", data.Errors[0])
-	compareString(t, "CreateUser", "501a3d9ef8182b2754000018", data.User.Id)
+	compareString(t, "CreateUser", "newuser@example.com", data.Email)
+	compareString(t, "CreateUser", "501a3d22f8182b2754000011", data.Id)
 }
 
 func TestBuyParse(t *testing.T) {
 	c := initTestClient()
-	data, err := c.Buy("1000", true)
+	data, err := c.Buy(1000.0, true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "Buys", true, data.Success)
-	compareString(t, "Buys", "2013-01-28T16:08:58-08:00", data.Transfer.Created_at)
-	compareString(t, "Buys", "USD", data.Transfer.Fees.Bank.Currency_iso)
-	compareString(t, "Buys", "13.55", data.Transfer.Subtotal.Amount)
+	compareString(t, "Buys", "2013-01-28T16:08:58-08:00", data.Created_at)
+	compareString(t, "Buys", "USD", data.Fees.Bank.Currency_iso)
+	compareString(t, "Buys", "13.55", data.Subtotal.Amount)
 }
 
 func TestSellParse(t *testing.T) {
@@ -141,10 +156,9 @@ func TestSellParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareBool(t, "Sells", true, data.Success)
-	compareString(t, "Sells", "2013-01-28T16:32:35-08:00", data.Transfer.Created_at)
-	compareString(t, "Sells", "USD", data.Transfer.Fees.Bank.Currency_iso)
-	compareString(t, "Sells", "13.50", data.Transfer.Subtotal.Amount)
+	compareString(t, "Sells", "2013-01-28T16:32:35-08:00", data.Created_at)
+	compareString(t, "Sells", "USD", data.Fees.Bank.Currency_iso)
+	compareString(t, "Sells", "13.50", data.Subtotal.Amount)
 }
 
 func TestGetContactsParse(t *testing.T) {
@@ -166,10 +180,8 @@ func TestGetTransactionsParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetTransactions", "5011f33df8182b142400000e", data.Current_user.Id)
-	compareString(t, "GetTransactions", "500.00", data.Native_balance.Amount)
-	compareString(t, "GetTransactions", "5018f833f8182b129c00002f", data.Transactions[0].Transaction.Id)
-	compareString(t, "GetTransactions", "-1.00000000", data.Transactions[1].Transaction.Amount.Amount)
+	compareString(t, "GetTransactions", "5018f833f8182b129c00002f", data.Transactions[0].Id)
+	compareString(t, "GetTransactions", "-1.00000000", data.Transactions[1].Amount.Amount)
 }
 
 func TestGetOrdersParse(t *testing.T) {
@@ -178,10 +190,8 @@ func TestGetOrdersParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetOrders", "A7C52JQT", data.Orders[0].Order.Id)
-	compareString(t, "GetOrders", "mgrmKftH5CeuFBU3THLWuTNKaZoCGJU5jQ", data.Orders[0].Order.Receive_address)
-	compareString(t, "GetOrders", "buy_now", data.Orders[0].Order.Button.Type)
-	compareInt(t, "GetOrders", int64(0), int64(data.Orders[0].Order.Transaction.Confirmations))
+	compareString(t, "GetOrders", "buy_now", data.Orders[0].Button.Type)
+	compareInt(t, "GetOrders", int64(0), int64(data.Orders[0].Transaction.Confirmations))
 }
 
 func TestGetTransfersParse(t *testing.T) {
@@ -190,9 +200,7 @@ func TestGetTransfersParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetTransfers", "Buy", data.Transfers[0].Transfer.Type)
-	compareString(t, "GetTransfers", "Pending", data.Transfers[0].Transfer.Status)
-	compareString(t, "GetTransfers", "BTC", data.Transfers[0].Transfer.Btc.Currency)
+	compareString(t, "GetTransfers", "BTC", data.Transfers[0].Btc.Currency)
 	compareInt(t, "GetTransfers", int64(1), int64(data.Num_pages))
 }
 

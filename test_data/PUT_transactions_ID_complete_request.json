@@ -1,8 +1,6 @@
 {
-  "success": false,
-  "errors": [
-    "Only the sender can complete a money request."
-  ],
+  "success": true,
+  "errors": [],
   "transaction": {
     "id": "503c46a3f8182b106500009b",
     "created_at": null,

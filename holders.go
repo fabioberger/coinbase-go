@@ -1,52 +1,48 @@
 package coinbase
 
+// Holders includes all the structs used for marshaling JSON responses from the coinbase API
+
+type tokensHolder struct {
+	Access_token  string `json:"access_token,omitempty"`
+	Token_type    string `json:"token_type,omitempty"`
+	Expires_in    int64  `json:"expires_in,omitempty"`
+	Refresh_token string `json:"refresh_token,omitempty"`
+	Scope         string `json:"scope,omitempty"`
+}
+
 type addressesHolder struct {
+	PaginationStats
 	Addresses []struct {
-		Address struct {
-			Address      string `json:"address,omitempty"`
-			Callback_url string `json:"callback_url,omitempty"`
-			Label        string `json:"label,omitempty"`
-			Created_at   string `json:"created_at,omitempty"`
-		} `json:"address,omitempty"`
+		Address address `json:"address,omitempty"`
 	} `json:"addresses,omitempty"`
-	Total_count  int `json:"total_count,omitempty"`
-	Num_pages    int `json:"num_pages,omitempty"`
-	Current_page int `json:"current_page,omitempty"`
 }
 
 type orderHolder struct {
-	Success bool  `json:"success,omitempty"`
-	Order   order `json:"order,omitempty"`
+	Response
+	Order order `json:"order,omitempty"`
 }
 
 type ordersHolder struct {
+	PaginationStats
 	Orders []struct {
 		Order order `json:"order,omitempty"`
 	} `json:"orders,omitempty"`
-	Total_count  int `json:"total_count,omitempty"`
-	Num_pages    int `json:"num_pages,omitempty"`
-	Current_page int `json:"current_page,omitempty"`
 }
 
 type buttonHolder struct {
-	Success    bool     `json:"success,omitempty"`
-	Button     button   `json:"button,omitempty"`
-	Errors     []string `json:"errors,omitempty"`
-	Embed_html string   `json:"embed_html,omitempty"` //Added embed_html for convenience
+	Response
+	Button button `json:"button,omitempty"`
 }
 
 type transfersHolder struct {
+	PaginationStats
 	Transfers []struct {
 		Transfer transfer `json:"transfer,omitempty"`
 	} `json:"transfers,omitempty"`
-	Total_count  int `json:"total_count,omitempty"`
-	Num_pages    int `json:"num_pages,omitempty"`
-	Current_page int `json:"current_page,omitempty"`
 }
 
 type transferHolder struct {
-	Success  bool     `json:"success,omitempty"`
-	Errors   []string `json:"errors,omitempty"`
+	Response
 	Transfer transfer `json:"transfer,omitempty"`
 }
 
@@ -60,40 +56,41 @@ type pricesHolder struct {
 }
 
 type usersHolder struct {
+	Response
 	Users []struct {
 		User user `json:"user,omitempty"`
 	} `json:"users,omitempty"`
 }
 
 type userHolder struct {
-	Success bool     `json:"success,omitempty"`
-	Errors  []string `json:"errors,omitempty"`
-	User    user     `json:"user,omitempty"`
-	Oauth   oauth    `json:"oauth,omitempty"`
+	Response
+	User  user  `json:"user,omitempty"`
+	Oauth oauth `json:"oauth,omitempty"`
+}
+
+type Response struct {
+	Success bool     `json:"success"`
+	Errors  []string `json:"errors"`
+	Error   string   `json:"error"`
 }
 
 type contactsHolder struct {
-	Contacts     []contact `json:"contacts,omitempty"`
-	Total_count  int       `json:"total_count,omitempty"`
-	Num_pages    int       `json:"num_pages,omitempty"`
-	Current_page int       `json:"current_page,omitempty"`
-	Emails       []string  `json:"emails,omitempty"` // Add for convenience
+	PaginationStats
+	Contacts []contact `json:"contacts,omitempty"`
+	Emails   []string  `json:"emails,omitempty"` // Add for convenience
 }
 
 type transactionHolder struct {
-	Success     bool        `json:"success,omitempty"`
-	Errors      []string    `json:"errors,omitempty"`
-	Transaction transaction `json:"transaction,omitempty"`
-	Transfer    transfer    `json:"transfer,omitempty"`
+	Response
+	Transaction transaction `json:"transaction"`
+	Transfer    transfer    `json:"transfer"`
 }
 
 type transactionsHolder struct {
+	PaginationStats
 	Current_user   user   `json:"current_user,omitempty"`
 	Balance        amount `json:"balance,omitempty"`
 	Native_balance amount `json:"native_balance,omitempty"`
-	Total_count    int    `json:"total_count,omitempty"`
-	Num_pages      int    `json:"num_pages,omitempty"`
-	Current_page   int    `json:"current_page,omitempty"`
 	Transactions   []struct {
 		Transaction transaction `json:"transaction,omitempty"`
 	} `json:"transactions,omitempty"`

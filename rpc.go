@@ -6,26 +6,24 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
-	"strconv"
+	"os"
 	"strings"
-	"time"
 )
+
+// BASE_PATH needed for reading mock JSON files in simulateRequest and for
+// referencing ca-coinbase.crt in OAuthService. Must be fixed path because
+// relative path changes depending on where library called
+var BASE_PATH string = os.Getenv("GOPATH") + "/src/github.com/fabioberger/coinbase-go"
 
 // Rpc handles the remote procedure call requests
 type Rpc struct {
-	auth   Authenticator
-	client http.Client
-	mock   bool
+	auth Authenticator
+	mock bool
 }
 
-// dialTimeout is used to enforce a timeout for all http requests.
-func dialTimeout(network, addr string) (net.Conn, error) {
-	var timeout = time.Duration(2 * time.Second) //how long to wait when trying to connect to the coinbase
-	return net.DialTimeout(network, addr, timeout)
-}
-
+// Send a request with params marshaled into a JSON payload in the body
+// The response value is marshaled from JSON into the specified holder struct
 func (r Rpc) Request(method string, endpoint string, params interface{}, holder interface{}) error {
 
 	jsonParams, err := json.Marshal(params)
@@ -39,10 +37,13 @@ func (r Rpc) Request(method string, endpoint string, params interface{}, holder 
 	}
 
 	var data []byte
-	if r.mock == true {
+	if r.mock == true { // Mock mode: Replace actual request with expected JSON from file
 		data, err = r.simulateRequest(endpoint, method)
 	} else {
 		data, err = r.executeRequest(request)
+	}
+	if err != nil {
+		return err
 	}
 
 	if err := json.Unmarshal(data, &holder); err != nil {
@@ -55,10 +56,7 @@ func (r Rpc) Request(method string, endpoint string, params interface{}, holder 
 // CreateRequest formats a request with all the necessary headers
 func (r Rpc) createRequest(method string, endpoint string, params []byte) (*http.Request, error) {
 
-	nonce := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-	endpoint = API_BASE + endpoint
-
-	message := nonce + endpoint + string(params) //Needed for HMAC Signature
+	endpoint = r.auth.GetBaseUrl() + endpoint //BaseUrl depends on Auth type used
 
 	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(params))
 	if err != nil {
@@ -66,17 +64,17 @@ func (r Rpc) createRequest(method string, endpoint string, params []byte) (*http
 	}
 
 	// Authenticate the request
-	r.auth.Authenticate(req, message, nonce)
+	r.auth.Authenticate(req, endpoint, params)
 
-	req.Header.Set("User-Agent", "CoinbasePHP/v1")
+	req.Header.Set("User-Agent", "CoinbaseGo/v1")
 	req.Header.Set("Content-Type", "application/json")
 
 	return req, nil
 }
 
-// executeRequest takes a request and returns the body of the response
+// executeRequest takes a prepared http.Request and returns the body of the response
 func (r Rpc) executeRequest(req *http.Request) ([]byte, error) {
-	resp, err := r.client.Do(req)
+	resp, err := r.auth.GetClient().Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +83,7 @@ func (r Rpc) executeRequest(req *http.Request) ([]byte, error) {
 	buf.ReadFrom(resp.Body)
 	bytes := buf.Bytes()
 	if resp.StatusCode != 200 {
-		if len(bytes) == 0 {
+		if len(bytes) == 0 { // Log response body for debugging purposes
 			log.Printf("Response body was empty")
 		} else {
 			log.Printf("Response body:\n\t%s\n", bytes)
@@ -97,8 +95,10 @@ func (r Rpc) executeRequest(req *http.Request) ([]byte, error) {
 
 // Simulate a request by returning a sample JSON from file
 func (r Rpc) simulateRequest(endpoint string, method string) ([]byte, error) {
+	// Test files conform to replacing '/' in endpoint with '_'
 	fileName := strings.Replace(endpoint, "/", "_", -1)
-	filePath := "test_data/" + method + "_" + fileName + ".json"
+	// file names also have method type prepended to ensure uniqueness
+	filePath := BASE_PATH + "/test_data/" + method + "_" + fileName + ".json"
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return nil, err

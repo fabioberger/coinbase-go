@@ -333,24 +333,20 @@ fmt.Println(exchanges["btc_to_cad"])
 `GetExchangeRate(from string, to string)` will return a single exchange rate
 
 ```go
-exchange, err := c.GetExchangeRate("btc", "usd")
+data, err := c.GetExchangeRate("btc", "usd")
 if err != nil {
 	log.Fatal(err)
 }
-fmt.Println(exchange)
-// 117.13892
+// '117.13892'
 ```
 
 ### Create a new user
 
 ```go
-user, err := c.CreateUser("test@email.com", "password")
-if err != nil {
-	log.Fatal(err)
-}
-fmt.Println(user.Email)
+$response = $coinbase->createUser("newuser@example.com", "some password");
+echo $response->user->email;
 // 'newuser@example.com'
-fmt.Println(user.Receive_address)
+echo $response->user->receive_address;
 // 'mpJKwdmJKYjiyfNo26eRp4j6qGwuUUnw9x'
 ```
 
@@ -360,96 +356,26 @@ A receive address is returned also in case you need to send the new user a payme
 
 This will return a list of contacts the user has previously sent to or received from. Useful for auto completion. By default, 30 contacts are returned at a time; use the `$page` and `$limit` parameters to adjust how pagination works.
 
-The allowed ContactsParams are:
-
 ```go
-type ContactsParams struct {
-	Page  int 
-	Limit int  
-	Query string
-}
-```
-
-```go
-params := &ContactsParams{
-	Page:  1,
-	Limit: 5,
-	Query: "user"
-}
-contacts, err := c.GetContacts(params)
-if err != nil {
-	log.Fatal(err)
-}
-fmt.Println(string.Join(contacts.Emails, ","))
+$response = $coinbase->getContacts("exa");
+echo implode(', ', $response->contacts);
 // 'user1@example.com, user2@example.com'
 ```
 
 ## Adding new methods
 
-You can see a [list of method calls here](https://github.com/fabioberger/coinbase-go/blob/master/coinbase.go) and how they are implemented.  They are all wrappers around the [Coinbase JSON API](https://coinbase.com/api/doc).
+You can see a [list of method calls here](https://github.com/coinbase/coinbase-go/blob/master/lib/Coinbase/Coinbase.go) and how they are implemented.  They are a wrapper around the [Coinbase JSON API](https://coinbase.com/api/doc).
 
-If there are any methods listed in the [API Reference](https://coinbase.com/api/doc) that don't have an explicit function name in the library, you can also call `get`, `post`, `put`, or `delete` with a `path`, `params` and holder struct for a quick implementation.  The marshaled JSON struct will be returned. For example:
+If there are any methods listed in the [API Reference](https://coinbase.com/api/doc) that don't have an explicit function name in the library, you can also call `get`, `post`, `put`, or `delete` with a `$path` and optional `$params` array for a quick implementation.  The raw JSON object will be returned. For example:
 
 ```go
-balance := map[string]string{} // Holder struct depends on JSON format returned from API
-if err := c.Get("account/balance", nil, &balance); err != nil {
-	log.Fatal(err)
-}
-fmt.Println(balance)
-// map[amount:36.62800000 currency:BTC]
+var_dump($coinbase->get('/account/balance'));
+// object(stdClass)#4 (2) {
+//   ["amount"]=>
+//   string(10) "0.56902981"
+//   ["currency"]=>
+//   string(3) "BTC"
+// }
 ```
 
 Or feel free to add a new wrapper method and submit a pull request.
-
-## OAuth Authentication
-
-To authenticate with OAuth, first create an OAuth application at https://coinbase.com/oauth/applications.
-When a user wishes to connect their Coinbase account, redirect them to a URL created with `func (o OAuth) CreateAuthorizeUrl(scope []string) string`:
-
-```go
-o, err := coinbase.OAuthService($_CLIENT_ID, $_CLIENT_SECRET, $_REDIRECT_URL)
-if err != nil {
-	log.Fatal(err)
-}
-scope := []string{"all",}
-header("Location: " . o.CreateAuthorizeUrl(scope));
-```
-
-After the user has authorized your application, they will be redirected back to the redirect URL specified above. A `code` parameter will be included - pass this into `GetTokens` to receive a set of tokens:
-
-```go
-query := req.URL.Query() 
-code := query.Get("code")
-tokens, err := o.GetTokens(code, "authorization_code")
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-Store these tokens safely, and use them to make Coinbase API requests in the future. For example:
-
-```go
-c := coinbase.OAuthClient(tokens)
-amount, err := c.GetBalance()
-if err != nil {
-	log.Fatal(err)
-}
-```
-
-A full example implementation is available in the `example` directory.
-
-## Security notes
-
-If someone gains access to your API Key they will have complete control of your Coinbase account.  This includes the abillity to send all of your bitcoins elsewhere.
-
-For this reason, API access is disabled on all Coinbase accounts by default.  If you decide to enable API key access you should take precautions to store your API key securely in your application.  How to do this is application specific, but it's something you should [research](http://programmers.stackexchange.com/questions/65601/is-it-smart-to-store-application-keys-ids-etc-directly-inside-an-application) if you have never done this before.
-
-## Testing
-
-If you'd like to contribute code or modify this library, you can run the test suite by executing the following in the command line:
-
- `go test ./... -v`
- 
-
-
-

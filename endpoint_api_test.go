@@ -63,28 +63,35 @@ func TestGetAllAddressesEndpoint(t *testing.T) {
 	assert.IsType(t, "string", addresses.Addresses[1].Address)
 }
 
-func TestGetButtonEndpoint(t *testing.T) {
+func TestCreateButtonEndpoint(t *testing.T) {
 	c := initClient()
-	params := &ButtonParams{
-		Button: &button{
-			Name:               "test",
-			Type:               "buy_now",
-			Subscription:       false,
-			Price_string:       "1.23",
-			Price_currency_iso: "USD",
-			Custom:             "Order123",
-			Callback_url:       "http://www.example.com/my_custom_button_callback",
-			Description:        "Sample Description",
-			Style:              "custom_large",
-			Include_email:      true,
-		},
+	params := &button{
+		Name:               "test",
+		Type:               "buy_now",
+		Subscription:       false,
+		Price_string:       "1.23",
+		Price_currency_iso: "USD",
+		Custom:             "Order123",
+		Callback_url:       "http://www.example.com/my_custom_button_callback",
+		Description:        "Sample Description",
+		Style:              "custom_large",
+		Include_email:      true,
 	}
-	data, err := c.GetButton(params)
+	data, err := c.CreateButton(params)
 	if err != nil {
 		log.Fatal(err)
 	}
 	assert.IsType(t, "string", data.Embed_html)
 	assert.IsType(t, "string", data.Type)
+}
+
+func TestGetCurrencies(t *testing.T) {
+	c := initClient()
+	data, err := c.GetCurrencies()
+	if err != nil {
+		log.Fatal()
+	}
+	assert.IsType(t, "string", data[0].Name)
 }
 
 func TestGetExchangeRatesEndpoint(t *testing.T) {

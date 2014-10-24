@@ -446,10 +446,12 @@ For this reason, API access is disabled on all Coinbase accounts by default.  If
 
 ## Testing
 
-If you'd like to contribute code or modify this library, you can run the test suite by executing the following in the command line:
+If you'd like to contribute code or modify this library, you can run the test suite by executing:
 
  `go test ./... -v`
  
+ in the command line.
+
 
 
 

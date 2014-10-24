@@ -1,7 +1,6 @@
 package coinbase
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -52,24 +51,20 @@ func TestGetAllAddressesParse(t *testing.T) {
 	compareInt(t, "GetAllAddressesParse", 1, int64(addresses.Num_pages))
 }
 
-func TestGetButtonParse(t *testing.T) {
+func TestCreateButtonParse(t *testing.T) {
 	c := initTestClient()
-	params := &ButtonParams{
-		Button: &button{},
-	}
-	data, err := c.GetButton(params)
+	params := &button{}
+	data, err := c.CreateButton(params)
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetButtonParse", "93865b9cae83706ae59220c013bc0afd", data.Code)
-	compareString(t, "GetButtonParse", "Sample description", data.Description)
+	compareString(t, "CreateButtonParse", "93865b9cae83706ae59220c013bc0afd", data.Code)
+	compareString(t, "CreateButtonParse", "Sample description", data.Description)
 }
 
 func TestSendMoneyParse(t *testing.T) {
 	c := initTestClient()
-	params := &TransactionRequestParams{
-		Transaction: &TransactionParams{},
-	}
+	params := &TransactionParams{}
 	data, err := c.SendMoney(params)
 	if err != nil {
 		log.Fatal(err)
@@ -80,9 +75,7 @@ func TestSendMoneyParse(t *testing.T) {
 
 func TestRequestMoneyParse(t *testing.T) {
 	c := initTestClient()
-	params := &TransactionRequestParams{
-		Transaction: &TransactionParams{},
-	}
+	params := &TransactionParams{}
 	data, err := c.RequestMoney(params)
 	if err != nil {
 		log.Fatal(err)
@@ -96,7 +89,6 @@ func TestResendRequestParse(t *testing.T) {
 	data, err := c.ResendRequest("ID")
 	if err != nil {
 		log.Fatal(err)
-		fmt.Println(err)
 	}
 	compareBool(t, "ResendRequestParse", true, data)
 }
@@ -152,7 +144,7 @@ func TestBuyParse(t *testing.T) {
 
 func TestSellParse(t *testing.T) {
 	c := initTestClient()
-	data, err := c.Sell("1000")
+	data, err := c.Sell(1000.0)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,6 +3,7 @@ package coinbase
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -67,6 +68,7 @@ func (c Client) GetBalance() (float64, error) {
 	if err := c.Get("account/balance", nil, &balance); err != nil {
 		return 0.0, err
 	}
+	fmt.Println(balance)
 	balanceFloat, err := strconv.ParseFloat(balance["amount"], 64)
 	if err != nil {
 		return 0, err
@@ -111,23 +113,26 @@ func (c Client) GenerateReceiveAddress(params *ReceiveAddressParams) (string, er
 }
 
 // Sends money to either a bitcoin or email address
-func (c Client) SendMoney(params *TransactionRequestParams) (*transactionConfirmation, error) {
+func (c Client) SendMoney(params *TransactionParams) (*transactionConfirmation, error) {
 	return c.transactionRequest("POST", "send_money", params)
 }
 
 // Request money from either a bitcoin or email address
-func (c Client) RequestMoney(params *TransactionRequestParams) (*transactionConfirmation, error) {
+func (c Client) RequestMoney(params *TransactionParams) (*transactionConfirmation, error) {
 	return c.transactionRequest("POST", "request_money", params)
 }
 
 // Execute a transaction request (i.e send_money, request_money)
-func (c Client) transactionRequest(method string, kind string, params *TransactionRequestParams) (*transactionConfirmation, error) {
+func (c Client) transactionRequest(method string, kind string, params *TransactionParams) (*transactionConfirmation, error) {
+	finalParams := &TransactionRequestParams{
+		Transaction: params,
+	}
 	holder := transactionHolder{}
 	var err error
 	if method == "POST" {
-		err = c.Post("transactions/"+kind, params, &holder)
+		err = c.Post("transactions/"+kind, finalParams, &holder)
 	} else if method == "PUT" {
-		err = c.Put("transactions/"+kind, params, &holder)
+		err = c.Put("transactions/"+kind, finalParams, &holder)
 	}
 	if err != nil {
 		return nil, err
@@ -172,9 +177,12 @@ func (c Client) CompleteRequest(id string) (*transactionConfirmation, error) {
 }
 
 // Get a new payment button including Embed_html as a field on button struct
-func (c Client) GetButton(params *ButtonParams) (*button, error) {
+func (c Client) CreateButton(params *button) (*button, error) {
+	finalParams := &ButtonParams{
+		Button: params,
+	}
 	holder := buttonHolder{}
-	if err := c.Post("buttons", params, &holder); err != nil {
+	if err := c.Post("buttons", finalParams, &holder); err != nil {
 		return nil, err
 	}
 	if err := checkApiErrors(holder.Response); err != nil {
@@ -230,7 +238,7 @@ func (c Client) Buy(amount float64, agreeBtcAmountVaries bool) (*transfer, error
 }
 
 // Sell an amount of BTC
-func (c Client) Sell(amount string) (*transfer, error) {
+func (c Client) Sell(amount float64) (*transfer, error) {
 	params := map[string]interface{}{
 		"qty": amount,
 	}

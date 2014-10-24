@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Service OAuth Authentication Struct implements the Authentication interface
+// ClientOAuthAuthentication Struct implements the Authentication interface
 // and takes care of authenticating OAuth RPC requests on behalf of a client
 // (i.e GetBalance())
 type ClientOAuthAuthentication struct {
@@ -15,7 +15,7 @@ type ClientOAuthAuthentication struct {
 	Client  http.Client
 }
 
-// Instantiate ClientOAuthAuthentication with the client OAuth tokens
+// ClientOAuth instantiates ClientOAuthAuthentication with the client OAuth tokens
 func ClientOAuth(tokens *oauthTokens) *ClientOAuthAuthentication {
 	a := ClientOAuthAuthentication{
 		Tokens:  tokens,

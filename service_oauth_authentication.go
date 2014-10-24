@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// Service OAuth Authentication Struct implements the Authentication interface
+// ServiceOAuthAuthentication Struct implements the Authentication interface
 // and takes care of authenticating OAuth RPC requests on behalf of the service
 // (i.e GetTokens())
 type ServiceOAuthAuthentication struct {
@@ -15,7 +15,7 @@ type ServiceOAuthAuthentication struct {
 	Client  http.Client
 }
 
-// Instantiate ServiceOAuthAuthentication with the coinbase certificate file
+// ServiceOAuth instantiates ServiceOAuthAuthentication with the coinbase certificate file
 func ServiceOAuth(certFilePath string) (*ServiceOAuthAuthentication, error) {
 	// First we read the cert
 	certs := x509.NewCertPool()

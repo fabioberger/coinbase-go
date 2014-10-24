@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// ApiKey Authentication Struct implements the Authentication interface and takes
+// ApiKeyAuthentication Struct implements the Authentication interface and takes
 // care of authenticating RPC requests for clients with a Key & Secret pair
 type ApiKeyAuthentication struct {
 	Key     string
@@ -18,7 +18,7 @@ type ApiKeyAuthentication struct {
 	Client  http.Client
 }
 
-// Instantiate ApiKeyAuthentication with the API key & secret
+// ApiKeyAuth instantiates ApiKeyAuthentication with the API key & secret
 func ApiKeyAuth(key string, secret string) *ApiKeyAuthentication {
 	a := ApiKeyAuthentication{
 		Key:     key,

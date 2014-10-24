@@ -22,7 +22,7 @@ type Rpc struct {
 	mock bool
 }
 
-// Send a request with params marshaled into a JSON payload in the body
+// Request sends a request with params marshaled into a JSON payload in the body
 // The response value is marshaled from JSON into the specified holder struct
 func (r Rpc) Request(method string, endpoint string, params interface{}, holder interface{}) error {
 
@@ -93,7 +93,7 @@ func (r Rpc) executeRequest(req *http.Request) ([]byte, error) {
 	return bytes, nil
 }
 
-// Simulate a request by returning a sample JSON from file
+// simulateRequest simulates a request by returning a sample JSON from file
 func (r Rpc) simulateRequest(endpoint string, method string) ([]byte, error) {
 	// Test files conform to replacing '/' in endpoint with '_'
 	fileName := strings.Replace(endpoint, "/", "_", -1)

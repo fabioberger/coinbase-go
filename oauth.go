@@ -33,7 +33,8 @@ func OAuthService(clientId string, clientSecret string, redirectUri string) (*OA
 	return &o, nil
 }
 
-// Create the Authorize Url used to redirect users for coinbase app authorization
+// CreateAuthorizeUrl create the Authorize Url used to redirect users for
+// coinbase app authorization
 func (o OAuth) CreateAuthorizeUrl(scope []string) string {
 	Url, _ := url.Parse("https://coinbase.com")
 	Url.Path += "/oauth/authorize"
@@ -48,18 +49,18 @@ func (o OAuth) CreateAuthorizeUrl(scope []string) string {
 	return Url.String()
 }
 
-// Refresh a users existing OAuth tokens
+// RefreshTokens refreshes a users existing OAuth tokens
 func (o OAuth) RefreshTokens(oldTokens map[string]interface{}) (*oauthTokens, error) {
 	refresh_token := oldTokens["refresh_token"].(string)
 	return o.GetTokens(refresh_token, "refresh_token")
 }
 
-// Generate new tokens for an OAuth user
+// NewTokens generates new tokens for an OAuth user
 func (o OAuth) NewTokens(code string) (*oauthTokens, error) {
 	return o.GetTokens(code, "authorization_code")
 }
 
-// Get tokens for an OAuth user specifying a grantType (i.e authorization_code)
+// GetTokens gets tokens for an OAuth user specifying a grantType (i.e authorization_code)
 func (o OAuth) GetTokens(code string, grantType string) (*oauthTokens, error) {
 
 	postVars := map[string]string{

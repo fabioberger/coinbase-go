@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Check for errors returned by coinbase API JSON response
+// checkApiErrors checks for errors returned by coinbase API JSON response
 // i.e { "success": false, "errors": ["Button with code code123456 does not exist"], ...}
 func checkApiErrors(resp Response) error {
 	if resp.Success == false { // Return errors received from API here

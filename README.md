@@ -407,7 +407,7 @@ To authenticate with OAuth, first create an OAuth application at https://coinbas
 When a user wishes to connect their Coinbase account, redirect them to a URL created with `func (o OAuth) CreateAuthorizeUrl(scope []string) string`:
 
 ```go
-o, err := coinbase.OAuthService($_CLIENT_ID, $_CLIENT_SECRET, $_REDIRECT_URL)
+o, err := coinbase.OAuthService(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
 if err != nil {
 	log.Fatal(err)
 }

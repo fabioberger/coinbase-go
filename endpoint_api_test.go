@@ -1,7 +1,6 @@
 package coinbase
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -34,13 +33,10 @@ func TestGetBalanceEndpoint(t *testing.T) {
 
 func TestGetReceiveAddressEndpoint(t *testing.T) {
 	t.Skip("Skipping GetReceiveAddressEndpoint")
-	fmt.Println("Skipped to avoid generating many addresses")
 	c := initClient()
-	params := &ReceiveAddressParams{
-		Address: &AddressParams{
-			Callback_url: "http://www.wealthlift.com",
-			Label:        "My Test Address",
-		},
+	params := &AddressParams{
+		Callback_url: "http://www.wealthlift.com",
+		Label:        "My Test Address",
 	}
 	address, err := c.GenerateReceiveAddress(params)
 	if err != nil {

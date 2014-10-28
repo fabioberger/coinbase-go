@@ -2,6 +2,7 @@ package coinbase
 
 // Holders includes all the structs used for marshaling JSON responses from the coinbase API
 
+// The holder used to marshal the JSON request returned in GetTokens
 type tokensHolder struct {
 	Access_token  string `json:"access_token,omitempty"`
 	Token_type    string `json:"token_type,omitempty"`
@@ -10,6 +11,7 @@ type tokensHolder struct {
 	Scope         string `json:"scope,omitempty"`
 }
 
+// addressesHolder used to marshal the JSON request returned in GetAllAddresses
 type addressesHolder struct {
 	PaginationStats
 	Addresses []struct {
@@ -17,11 +19,13 @@ type addressesHolder struct {
 	} `json:"addresses,omitempty"`
 }
 
+// orderHolder used to marshal the JSON request returned in CreateOrderFromButtonCode and GetOrder
 type orderHolder struct {
 	Response
 	Order order `json:"order,omitempty"`
 }
 
+// orderHolders used to marshal the JSON request returned in GetOrders
 type ordersHolder struct {
 	PaginationStats
 	Orders []struct {
@@ -29,11 +33,13 @@ type ordersHolder struct {
 	} `json:"orders,omitempty"`
 }
 
+// buttonHolder used to marshal the JSON request returned in CreateButton
 type buttonHolder struct {
 	Response
 	Button button `json:"button,omitempty"`
 }
 
+// transfersHolder used to marshal the JSON request returned in GetTransfers
 type transfersHolder struct {
 	PaginationStats
 	Transfers []struct {
@@ -41,11 +47,13 @@ type transfersHolder struct {
 	} `json:"transfers,omitempty"`
 }
 
+// transferHolder used to marshal the JSON request returned in Buy & Sell
 type transferHolder struct {
 	Response
 	Transfer transfer `json:"transfer,omitempty"`
 }
 
+// pricesHolder used to marshal the JSON request returned in GetBuyPrice & GetSellPrice
 type pricesHolder struct {
 	Subtotal amount `json:"subtotal,omitempty"`
 	Fees     []struct {
@@ -55,6 +63,7 @@ type pricesHolder struct {
 	Total amount `json:"total,omitempty"`
 }
 
+// usersHolder used to marshal the JSON request returned in GetUser
 type usersHolder struct {
 	Response
 	Users []struct {
@@ -62,30 +71,36 @@ type usersHolder struct {
 	} `json:"users,omitempty"`
 }
 
+// userHolder used to marshal the JSON request returned in CreateUser
 type userHolder struct {
 	Response
 	User  user  `json:"user,omitempty"`
 	Oauth oauth `json:"oauth,omitempty"`
 }
 
+// The sub-structure of a response denominating its success and/or errors
 type Response struct {
 	Success bool     `json:"success"`
 	Errors  []string `json:"errors"`
 	Error   string   `json:"error"`
 }
 
+// contactsHolder used to marshal the JSON request returned in GetContacts
 type contactsHolder struct {
 	PaginationStats
 	Contacts []contact `json:"contacts,omitempty"`
 	Emails   []string  `json:"emails,omitempty"` // Add for convenience
 }
 
+// transactionHolder used to marshal the JSON request returned in SendMoney, RequestMoney,
+// GetTransaction
 type transactionHolder struct {
 	Response
 	Transaction transaction `json:"transaction"`
 	Transfer    transfer    `json:"transfer"`
 }
 
+// transactionsHolder used to marshal the JSON request returned in GetTransactions
 type transactionsHolder struct {
 	PaginationStats
 	Current_user   user   `json:"current_user,omitempty"`

@@ -29,9 +29,7 @@ func TestGetBalanceParse(t *testing.T) {
 
 func TestGetReceiveAddressParse(t *testing.T) {
 	c := initTestClient()
-	params := &ReceiveAddressParams{
-		Address: &AddressParams{},
-	}
+	params := &AddressParams{}
 	address, err := c.GenerateReceiveAddress(params)
 	if err != nil {
 		log.Fatal(err)

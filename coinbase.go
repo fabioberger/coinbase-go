@@ -3,7 +3,6 @@ package coinbase
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -68,7 +67,6 @@ func (c Client) GetBalance() (float64, error) {
 	if err := c.Get("account/balance", nil, &balance); err != nil {
 		return 0.0, err
 	}
-	fmt.Println(balance)
 	balanceFloat, err := strconv.ParseFloat(balance["amount"], 64)
 	if err != nil {
 		return 0, err
@@ -92,9 +90,7 @@ func (c Client) GetAllAddresses(params *AddressesParams) (*addresses, error) {
 		return nil, err
 	}
 	addresses := addresses{
-		Total_count:  holder.Total_count,
-		Num_pages:    holder.Current_page,
-		Current_page: holder.Current_page,
+		PaginationStats: holder.PaginationStats,
 	}
 	// Remove one layer of nesting
 	for _, addr := range holder.Addresses {
@@ -104,7 +100,7 @@ func (c Client) GetAllAddresses(params *AddressesParams) (*addresses, error) {
 }
 
 // GenerateReceiveAddress generates and returns a new bitcoin receive address
-func (c Client) GenerateReceiveAddress(params *ReceiveAddressParams) (string, error) {
+func (c Client) GenerateReceiveAddress(params *AddressParams) (string, error) {
 	holder := map[string]interface{}{}
 	if err := c.Post("account/generate_receive_address", params, &holder); err != nil {
 		return "", err
@@ -123,7 +119,9 @@ func (c Client) RequestMoney(params *TransactionParams) (*transactionConfirmatio
 }
 
 func (c Client) transactionRequest(method string, kind string, params *TransactionParams) (*transactionConfirmation, error) {
-	finalParams := &TransactionRequestParams{
+	finalParams := &struct {
+		Transaction *TransactionParams `json:"transaction"`
+	}{
 		Transaction: params,
 	}
 	holder := transactionHolder{}
@@ -136,7 +134,7 @@ func (c Client) transactionRequest(method string, kind string, params *Transacti
 	if err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, kind); err != nil {
 		return nil, err
 	}
 	confirmation := transactionConfirmation{
@@ -177,14 +175,16 @@ func (c Client) CompleteRequest(id string) (*transactionConfirmation, error) {
 
 // CreateButton gets a new payment button including Embed_html as a field on button struct
 func (c Client) CreateButton(params *button) (*button, error) {
-	finalParams := &ButtonParams{
+	finalParams := &struct {
+		Button *button `json:"button"`
+	}{
 		Button: params,
 	}
 	holder := buttonHolder{}
 	if err := c.Post("buttons", finalParams, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "CreateButton"); err != nil {
 		return nil, err
 	}
 	button := holder.Button
@@ -198,7 +198,7 @@ func (c Client) CreateOrderFromButtonCode(buttonCode string) (*order, error) {
 	if err := c.Post("buttons/"+buttonCode+"/create_order", nil, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "CreateOrderFromButtonCode"); err != nil {
 		return nil, err
 	}
 	return &holder.Order, nil
@@ -214,7 +214,7 @@ func (c Client) CreateUser(email string, password string) (*user, error) {
 	if err := c.Post("users", params, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "CreateUser"); err != nil {
 		return nil, err
 	}
 	return &holder.User, nil
@@ -230,7 +230,7 @@ func (c Client) Buy(amount float64, agreeBtcAmountVaries bool) (*transfer, error
 	if err := c.Post("buys", params, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "Buy"); err != nil {
 		return nil, err
 	}
 	return &holder.Transfer, nil
@@ -245,7 +245,7 @@ func (c Client) Sell(amount float64) (*transfer, error) {
 	if err := c.Post("sells", params, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "Sell"); err != nil {
 		return nil, err
 	}
 	return &holder.Transfer, nil
@@ -392,7 +392,7 @@ func (c Client) GetTransaction(id string) (*transaction, error) {
 	if err := c.Get("transactions/"+id, nil, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "GetTransaction"); err != nil {
 		return nil, err
 	}
 	return &holder.Transaction, nil
@@ -404,7 +404,7 @@ func (c Client) GetOrder(id string) (*order, error) {
 	if err := c.Get("orders/"+id, nil, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response); err != nil {
+	if err := checkApiErrors(holder.Response, "GetOrder"); err != nil {
 		return nil, err
 	}
 	return &holder.Order, nil

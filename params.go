@@ -5,28 +5,21 @@ package coinbase
 // for a given request. Also included here are the return object structs returned by
 // specific API calls
 
+// Parameter Struct for GET /api/v1/addresses Requests
 type AddressesParams struct {
-	Page       int    `json:"page,omitempty"`
-	Limit      int    `json:"limit,omitempty"`
-	Account_id string `json:"account_id,omitempty"`
-	Query      string `json:"query,omitempty"`
+	Page      int    `json:"page,omitempty"`
+	Limit     int    `json:"limit,omitempty"`
+	AccountId string `json:"account_id,omitempty"`
+	Query     string `json:"query,omitempty"`
 }
 
-type ReceiveAddressParams struct {
-	Account_id string         `json:"account_id,omitempty"`
-	Address    *AddressParams `json:"address,omitempty"`
-}
-
+// Parameter Struct for POST /api/v1/account/generate_receive_address Requests
 type AddressParams struct {
 	Label        string `json:"label,omitempty"`
 	Callback_url string `json:"callback_url,omitempty"`
 }
 
-type TransactionRequestParams struct {
-	Account_id  string             `json:"account_id,omitempty"`
-	Transaction *TransactionParams `json:"transaction"`
-}
-
+// Parameter Struct for POST /api/v1/transactions/(request_money,send_money) Requests
 type TransactionParams struct {
 	To                  string `json:"to,omitempty"`
 	From                string `json:"from,omitempty"`
@@ -41,35 +34,33 @@ type TransactionParams struct {
 	Order_id            string `json:"order_id,omitempty"`
 }
 
-type ButtonParams struct {
-	Account_id string  `json:"account_id,omitempty"`
-	Button     *button `json:"button,omitempty"`
-}
-
+// Parameter Struct for GET /api/v1/contacts Requests
 type ContactsParams struct {
 	Page  int    `json:"page,omitempty"`
 	Limit int    `json:"limit,omitempty"`
 	Query string `json:"query,omitempty"`
 }
 
+// The OAuth Tokens Struct returned from OAuth Authentication
 type oauthTokens struct {
 	Access_token  string
 	Refresh_token string
 	Expire_time   int64
 }
 
+// The return response from SendMoney, RequestMoney, CompleteRequest
 type transactionConfirmation struct {
 	Transaction transaction
 	Transfer    transfer
 }
 
+// The return response from GetAllAddresses
 type addresses struct {
-	Total_count  int
-	Num_pages    int
-	Current_page int
-	Addresses    []address
+	PaginationStats
+	Addresses []address
 }
 
+// The structure for one returned address from GetAllAddresses
 type address struct {
 	Address      string `json:"address,omitempty"`
 	Callback_url string `json:"callback_url,omitempty"`
@@ -77,17 +68,20 @@ type address struct {
 	Created_at   string `json:"created_at,omitempty"`
 }
 
+// The sub-structure of a response denominating a currency
 type currency struct {
 	Name string `json:"name,omitempty"`
 	Iso  string `json:"iso,omitempty"`
 }
 
+// The sub-structure of a response denominating a contact
 type contact struct {
 	Contact struct {
 		Email string `json:"email,omitempty"`
 	} `json:"contact,omitempty"`
 }
 
+// The return response from CreateButton
 type button struct {
 	Name                  string `json:"name,omitempty"`
 	Price_string          string `json:"price_string,omitempty"`
@@ -122,6 +116,7 @@ type button struct {
 	Embed_html            string `json:"embed_html"` //Added embed_html for convenience
 }
 
+// The return response from GetUser and CreateUser
 type user struct {
 	Id              string   `json:"id,omitempty"`
 	Name            string   `json:"name,omitempty"`
@@ -137,6 +132,7 @@ type user struct {
 	Sell_limit      amount   `json:"sell_limit,omitempty"`
 }
 
+// The sub-structure of a response denominating a merchant
 type merchant struct {
 	Company_name string `json:"company_name,omitempty"`
 	Logo         struct {
@@ -146,6 +142,7 @@ type merchant struct {
 	} `json:"logo,omitempty"`
 }
 
+// The sub-structure of a response denominating the oauth data
 type oauth struct {
 	Access_token  string `json:"access_token,omitempty"`
 	Token_type    string `json:"token_type,omitempty"`
@@ -154,17 +151,20 @@ type oauth struct {
 	Scope         string `json:"scope,omitempty"`
 }
 
+// The sub-structure of a response denominating pagination stats
 type PaginationStats struct {
 	Total_count  int `json:"total_count,omitempty"`
 	Num_pages    int `json:"num_pages,omitempty"`
 	Current_page int `json:"current_page,omitempty"`
 }
 
+// The return response from GetTransfers
 type transfers struct {
 	PaginationStats
 	Transfers []transfer
 }
 
+// The sub-structure of a response denominating a transfer
 type transfer struct {
 	Id             string `json:"id,omitempty"`
 	Type           string `json:"type,omitempty"`
@@ -180,32 +180,38 @@ type transfer struct {
 	Transaction_id string `json:"transaction_id,omitempty"`
 }
 
+// The sub-structure of a response denominating an amount
 type amount struct {
 	Amount   string `json:"amount,omitempty"`
 	Currency string `json:"currency,omitempty"`
 }
 
+// The sub-structure of a response denominating a fee
 type fee struct {
 	Cents        int    `json:"cents,omitempty"`
 	Currency_iso string `json:"currency_iso,omitempty"`
 }
 
+// The sub-structure of a response denominating fees
 type fees struct {
 	Coinbase fee `json:"coinbase,omitempty"`
 	Bank     fee `json:"bank,omitempty"`
 }
 
+// The sub-structure of a response denominating a transaction actor
 type transactionActor struct {
 	Id    string `json:"id,omitempty"`
 	Name  string `json:"name,omitempty"`
 	Email string `json:"email,omitempty"`
 }
 
+// The return response from GetTransactions
 type transactions struct {
 	PaginationStats
 	Transactions []transaction
 }
 
+// The sub-structure of a response denominating a transaction
 type transaction struct {
 	Id                  string           `json:"id,omitempty"`
 	Create_at           string           `json:"create_at,omitempty"`
@@ -227,11 +233,13 @@ type transaction struct {
 	Confirmations       int              `json:"confirmations,omitempty"`
 }
 
+// The return response from GetOrders
 type orders struct {
 	PaginationStats
 	Orders []order
 }
 
+// The sub-structure of a response denominating an order
 type order struct {
 	Id              string      `json:"id,omitempty"`
 	Created_at      string      `json:"created_at,omitempty"`

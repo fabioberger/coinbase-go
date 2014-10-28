@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/codegangsta/negroni"
 	"github.com/fabioberger/coinbase-go"
@@ -52,6 +53,9 @@ func main() {
 }
 
 func GetOAuthService() (*coinbase.OAuth, error) {
-	// Be sure to replace CLIENT_ID and CLIENT_SECRET with your OAuth app id and secret
-	return coinbase.OAuthService(CLIENT_ID, CLIENT_SECRET, "https://localhost:3000/tokens")
+	// Be sure your coinbase OAuth CLIENT_ID and CLIENT_SECRET are set as shell environment variables
+	// In shell run:
+	// export COINBASE_CLIENT_ID="YOUR_CLIENT_ID"
+	// export COINBASE_CLIENT_SECRET="YOUR_CLIENT_SECRET"
+	return coinbase.OAuthService(os.Getenv("COINBASE_CLIENT_ID"), os.Getenv("COINBASE_CLIENT_SECRET"), "https://localhost:3000/tokens")
 }

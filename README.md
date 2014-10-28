@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/fabioberger/coinbase-go?status.svg)](https://godoc.org/github.com/fabioberger/coinbase-go) 
+
 # Coinbase Go Client Library
 
 An easy way to buy, send, and accept [bitcoin](http://en.wikipedia.org/wiki/Bitcoin) through the [Coinbase API](https://coinbase.com/docs/api/overview).
@@ -26,7 +28,17 @@ import (
 
 Start by [enabling an API Key on your account](https://coinbase.com/settings/api).
 
-Next, create an instance of the client using the `ApiKeyClient` method:
+Next, set the API keys as environment variables in your bash config file (i.e ~/.bash_profile, ~/.bashrc, etc.) with these lines:
+
+`export COINBASE_KEY="YOUR_COINBASE_KEY"`
+
+`export COINBASE_SECRET="YOUR_COINBASE_SECRET"`
+
+Save this file and reload your bash configs with:
+
+`source ~/.bash_profile # .bashrc, etc.`
+
+Now, create an instance of the client using the `ApiKeyClient` method:
 
 ```go
 c := coinbase.ApiKeyClient(os.Getenv("COINBASE_KEY"), os.Getenv("COINBASE_SECRET"))
@@ -35,7 +47,7 @@ c := coinbase.ApiKeyClient(os.Getenv("COINBASE_KEY"), os.Getenv("COINBASE_SECRET
 Now you can call methods on `c` similar to the ones described in the [API reference](https://coinbase.com/api/doc).  For example:
 
 ```go
-amount, err := c.GetBalance()
+balance, err := c.GetBalance()
 if err != nil {
 	log.Fatal(err)
 }
@@ -119,7 +131,7 @@ This will send an email to the recipient, requesting payment, and give them an e
 
 ```go
 params := &coinbase.TransactionParams{
-	To:     "client@example.com",
+	From:     "client@example.com",
 	Amount: "2.5",
 	Notes:  "contractor hours in January (website redesign for 50 BTC)",
 }
@@ -190,7 +202,7 @@ fmt.Println(price.Subtotal.Amount) // Subtotal does not include fees
 fmt.Println(price.Total.Amount) // Total includes coinbase & bank fee
 // '306.18'
 
-price, err := c.GetSellPrice(1)
+price, err = c.GetSellPrice(1)
 if err != nil {
 	log.Fatal(err)
 }
@@ -374,7 +386,7 @@ type ContactsParams struct {
 params := &ContactsParams{
 	Page:  1,
 	Limit: 5,
-	Query: "user"
+	Query: "user",
 }
 contacts, err := c.GetContacts(params)
 if err != nil {
@@ -388,7 +400,7 @@ fmt.Println(string.Join(contacts.Emails, ","))
 
 You can see a [list of method calls here](https://github.com/fabioberger/coinbase-go/blob/master/coinbase.go) and how they are implemented.  They are all wrappers around the [Coinbase JSON API](https://coinbase.com/api/doc).
 
-If there are any methods listed in the [API Reference](https://coinbase.com/api/doc) that don't have an explicit function name in the library, you can also call `get`, `post`, `put`, or `delete` with a `path`, `params` and holder struct for a quick implementation.  The marshaled JSON struct will be returned. For example:
+If there are any methods listed in the [API Reference](https://coinbase.com/api/doc) that don't have an explicit function name in the library, you can also call `get`, `post`, `put`, or `delete` with a `path`, `params` and holder struct for a quick implementation. Holder should be a pointer to some data structure. The library will attempt to unmarshal the response from the server into holder. For example:
 
 ```go
 balance := map[string]string{} // Holder struct depends on JSON format returned from API
@@ -436,7 +448,20 @@ if err != nil {
 }
 ```
 
-A full example implementation is available in the `example` directory.
+A full example implementation is available in the `example` directory. In order to run this example implementation, you will need to install the following dependency:
+
+`go get github.com/codegangsta/negroni`
+
+You will also need to set your coinbase application client_id and client_secret as environment variables by adding these lines to your bash config file (i.e ~/.bashrc, ~/.bash_profile, etc...):
+
+`export COINBASE_CLIENT_ID="YOUR_CLIENT_ID"`
+`export COINBASE_CLIENT_SECRET="YOUR_CLIENT_SECRET"`
+
+Once you have done this, reload your bash configs and run the example:
+
+`source ~/.bash_profile`
+
+`go run OAuthExample.go`
 
 ## Security notes
 
@@ -446,7 +471,11 @@ For this reason, API access is disabled on all Coinbase accounts by default.  If
 
 ## Testing
 
-If you'd like to contribute code or modify this library, you can run the test suite by executing the following in the command line:
+In order to run the tests for this library, you will first need to install the Testify/Assert dependency with the following command:
+
+ `go get github.com/stretchr/testify/assert`
+
+To run the test suite, execute the following in your command line:
 
  `go test ./... -v`
  

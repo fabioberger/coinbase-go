@@ -9,13 +9,16 @@ import (
 
 // checkApiErrors checks for errors returned by coinbase API JSON response
 // i.e { "success": false, "errors": ["Button with code code123456 does not exist"], ...}
-func checkApiErrors(resp Response) error {
+func checkApiErrors(resp Response, method string) error {
 	if resp.Success == false { // Return errors received from API here
+		err := " in " + method + "()"
 		if resp.Errors != nil {
-			return errors.New(strings.Join(resp.Errors, ","))
+			err = strings.Join(resp.Errors, ",") + err
+			return errors.New(err)
 		}
 		if resp.Error != "" { // Return errors received from API here
-			return errors.New(resp.Error)
+			err = resp.Error + err
+			return errors.New(err)
 		}
 	}
 	return nil

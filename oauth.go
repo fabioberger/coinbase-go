@@ -16,7 +16,7 @@ type OAuth struct {
 
 // OAuthService Instantiates OAuth Struct in order to send service related OAuth requests
 func OAuthService(clientId string, clientSecret string, redirectUri string) (*OAuth, error) {
-	certFilePath := BASE_PATH + "/ca-coinbase.crt"
+	certFilePath := BasePath + "/ca-coinbase.crt"
 	serviceAuth, err := ServiceOAuth(certFilePath)
 	if err != nil {
 		return nil, err

@@ -1,6 +1,7 @@
 package coinbase
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -32,7 +33,7 @@ func TestGetBalanceEndpoint(t *testing.T) {
 }
 
 func TestGetReceiveAddressEndpoint(t *testing.T) {
-	t.Skip("Skipping GetReceiveAddressEndpoint")
+	t.Skip("Skipping GetReceiveAddressEndpoint in order not to create excessive amounts of receive addresses during testing.")
 	c := initClient()
 	params := &AddressParams{
 		Callback_url: "http://www.wealthlift.com",
@@ -56,7 +57,7 @@ func TestGetAllAddressesEndpoint(t *testing.T) {
 		log.Fatal(err)
 	}
 	assert.IsType(t, "string", addresses.Addresses[0].Created_at)
-	assert.IsType(t, "string", addresses.Addresses[1].Address)
+	assert.IsType(t, "string", addresses.Addresses[0].Address)
 }
 
 func TestCreateButtonEndpoint(t *testing.T) {
@@ -75,7 +76,10 @@ func TestCreateButtonEndpoint(t *testing.T) {
 	}
 	data, err := c.CreateButton(params)
 	if err != nil {
-		log.Fatal(err)
+		if fmt.Sprint(err) != "You have not filled out your merchant profile. Please enter your information in the Profile section. in CreateButton()" {
+			log.Fatal(err)
+		}
+		t.Skip("Skip this test since user hasn't filled out their merchant profile yet.")
 	}
 	assert.IsType(t, "string", data.Embed_html)
 	assert.IsType(t, "string", data.Type)

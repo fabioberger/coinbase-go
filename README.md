@@ -116,17 +116,17 @@ All possible transaction parameters are detailed below:
 
 ```go
 type TransactionParams struct {
-	To                  string
-	From                string
-	Amount              string
-	AmountString       string
+	To                string
+	From              string
+	Amount            string
+	AmountString      string
 	AmountCurrencyIso string
-	Notes               string
-	UserFee            string
-	ReferrerId         string
-	Idem                string
-	InstantBuy         bool
-	OrderId            string
+	Notes             string
+	UserFee           string
+	ReferrerId        string
+	Idem              string
+	InstantBuy        bool
+	OrderId           string
 }
 ```
 Note that parameters are equivalent to those of the coinbase API except in camelcase rather then with underscores between words (Golang standard). This can also be assumed for accessing return values. For detailed information on each parameter, check out the ['send_money' documentation](https://www.coinbase.com/api/doc/1.0/transactions/send_money.html)
@@ -268,33 +268,33 @@ The allowed ButtonParams are:
 
 ```go
 type button struct {
-	Name                  string
-	PriceString          string
+	Name                string
+	PriceString         string
 	PriceCurrencyIso    string
-	Type                  string
-	Subscription          bool
-	Repeat                string
-	Style                 string
-	Text                  string
-	Description           string
-	Custom                string
-	CustomSecure         bool
-	CallbackUrl          string
-	SuccessUrl           string
-	CancelUrl            string
-	InfoUrl              string
-	AutoRedirect         bool
+	Type                string
+	Subscription        bool
+	Repeat              string
+	Style               string
+	Text                string
+	Description         string
+	Custom              string
+	CustomSecure        bool
+	CallbackUrl         string
+	SuccessUrl          string
+	CancelUrl           string
+	InfoUrl             string
+	AutoRedirect        bool
 	AutoRedirectSuccess bool
 	AutoRedirectCancel  bool
-	VariablePrice        bool
-	ChoosePrice          bool
-	IncludeAddress       bool
-	IncludeEmail         bool
-	Price1                string
-	Price2                string
-	Price3                string
-	Price4                string
-	Price5                string
+	VariablePrice       bool
+	ChoosePrice         bool
+	IncludeAddress      bool
+	IncludeEmail        bool
+	Price1              string
+	Price2              string
+	Price3              string
+	Price4              string
+	Price5              string
 }
 ```
 The `custom` param will get passed through in [callbacks](https://coinbase.com/docs/merchant_tools/callbacks) to your site.  The list of valid `options` [are described here](https://coinbase.com/api/doc/1.0/buttons/create.html).
@@ -303,17 +303,17 @@ For detailed information on each parameter, check out the ['buttons' documentati
 
 ```go
 params := &button{
-	Name:               "test",
-	Type:               "buy_now",
-	Subscription:       false,
-	PriceString:       "1.23",
-	PriceCurrencyIso: "USD",
-	Custom:             "Order123",
-	CallbackUrl:       "http://www.example.com/my_custom_button_callback",
-	Description:        "Sample Description",
-	Style:              "custom_large",
-	IncludeEmail:      true,
-}
+		Name:             "test",
+		Type:             "buy_now",
+		Subscription:     false,
+		PriceString:      "1.23",
+		PriceCurrencyIso: "USD",
+		Custom:           "Order123",
+		CallbackUrl:      "http://www.example.com/my_custom_button_callback",
+		Description:      "Sample Description",
+		Style:            "custom_large",
+		IncludeEmail:     true,
+	}
 button, err := c.CreateButton(params)
 if err != nil {
 	log.Fatal(err)

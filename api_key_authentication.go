@@ -11,7 +11,7 @@ import (
 
 // ApiKeyAuthentication Struct implements the Authentication interface and takes
 // care of authenticating RPC requests for clients with a Key & Secret pair
-type ApiKeyAuthentication struct {
+type apiKeyAuthentication struct {
 	Key     string
 	Secret  string
 	BaseUrl string
@@ -19,8 +19,8 @@ type ApiKeyAuthentication struct {
 }
 
 // ApiKeyAuth instantiates ApiKeyAuthentication with the API key & secret
-func ApiKeyAuth(key string, secret string) *ApiKeyAuthentication {
-	a := ApiKeyAuthentication{
+func apiKeyAuth(key string, secret string) *apiKeyAuthentication {
+	a := apiKeyAuthentication{
 		Key:     key,
 		Secret:  secret,
 		BaseUrl: "https://api.coinbase.com/v1/",
@@ -35,7 +35,7 @@ func ApiKeyAuth(key string, secret string) *ApiKeyAuthentication {
 
 // API Key + Secret authentication requires a request header of the HMAC SHA-256
 // signature of the "message" as well as an incrementing nonce and the API key
-func (a ApiKeyAuthentication) Authenticate(req *http.Request, endpoint string, params []byte) error {
+func (a apiKeyAuthentication) authenticate(req *http.Request, endpoint string, params []byte) error {
 
 	nonce := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	message := nonce + endpoint + string(params) //As per Coinbase Documentation
@@ -53,10 +53,10 @@ func (a ApiKeyAuthentication) Authenticate(req *http.Request, endpoint string, p
 	return nil
 }
 
-func (a ApiKeyAuthentication) GetBaseUrl() string {
+func (a apiKeyAuthentication) getBaseUrl() string {
 	return a.BaseUrl
 }
 
-func (a ApiKeyAuthentication) GetClient() *http.Client {
+func (a apiKeyAuthentication) getClient() *http.Client {
 	return &a.Client
 }

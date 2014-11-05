@@ -4,18 +4,19 @@ package coinbase
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 // Client is the struct from which all API requests are made
 type Client struct {
-	rpc Rpc
+	rpc rpc
 }
 
 // ApiKeyClient instantiates the client with ApiKey Authentication
 func ApiKeyClient(key string, secret string) Client {
 	c := Client{
-		rpc: Rpc{
-			auth: ApiKeyAuth(key, secret),
+		rpc: rpc{
+			auth: apiKeyAuth(key, secret),
 			mock: false,
 		},
 	}
@@ -25,8 +26,8 @@ func ApiKeyClient(key string, secret string) Client {
 // OAuthClient instantiates the client with OAuth Authentication
 func OAuthClient(tokens *oauthTokens) Client {
 	c := Client{
-		rpc: Rpc{
-			auth: ClientOAuth(tokens),
+		rpc: rpc{
+			auth: clientOAuth(tokens),
 			mock: false,
 		},
 	}
@@ -35,7 +36,7 @@ func OAuthClient(tokens *oauthTokens) Client {
 
 // ApiKeyClientTest instantiates Testing ApiKeyClient. All client methods execute
 // normally except responses are returned from a test_data/ file instead of the coinbase API
-func ApiKeyClientTest(key string, secret string) Client {
+func apiKeyClientTest(key string, secret string) Client {
 	c := ApiKeyClient(key, secret)
 	c.rpc.mock = true
 	return c
@@ -90,7 +91,7 @@ func (c Client) GetAllAddresses(params *AddressesParams) (*addresses, error) {
 		return nil, err
 	}
 	addresses := addresses{
-		PaginationStats: holder.PaginationStats,
+		paginationStats: holder.paginationStats,
 	}
 	// Remove one layer of nesting
 	for _, addr := range holder.Addresses {
@@ -134,7 +135,7 @@ func (c Client) transactionRequest(method string, kind string, params *Transacti
 	if err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, kind); err != nil {
+	if err := checkApiErrors(holder.response, kind); err != nil {
 		return nil, err
 	}
 	confirmation := transactionConfirmation{
@@ -173,7 +174,7 @@ func (c Client) CompleteRequest(id string) (*transactionConfirmation, error) {
 	return c.transactionRequest("PUT", id+"/complete_request", nil)
 }
 
-// CreateButton gets a new payment button including Embed_html as a field on button struct
+// CreateButton gets a new payment button including EmbedHtml as a field on button struct
 func (c Client) CreateButton(params *button) (*button, error) {
 	finalParams := &struct {
 		Button *button `json:"button"`
@@ -184,11 +185,11 @@ func (c Client) CreateButton(params *button) (*button, error) {
 	if err := c.Post("buttons", finalParams, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "CreateButton"); err != nil {
+	if err := checkApiErrors(holder.response, "CreateButton"); err != nil {
 		return nil, err
 	}
 	button := holder.Button
-	button.Embed_html = "<div class=\"coinbase-button\" data-code=\"" + button.Code + "\"></div><script src=\"https://coinbase.com/assets/button.js\" type=\"text/javascript\"></script>"
+	button.EmbedHtml = "<div class=\"coinbase-button\" data-code=\"" + button.Code + "\"></div><script src=\"https://coinbase.com/assets/button.js\" type=\"text/javascript\"></script>"
 	return &button, nil
 }
 
@@ -198,7 +199,7 @@ func (c Client) CreateOrderFromButtonCode(buttonCode string) (*order, error) {
 	if err := c.Post("buttons/"+buttonCode+"/create_order", nil, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "CreateOrderFromButtonCode"); err != nil {
+	if err := checkApiErrors(holder.response, "CreateOrderFromButtonCode"); err != nil {
 		return nil, err
 	}
 	return &holder.Order, nil
@@ -214,7 +215,7 @@ func (c Client) CreateUser(email string, password string) (*user, error) {
 	if err := c.Post("users", params, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "CreateUser"); err != nil {
+	if err := checkApiErrors(holder.response, "CreateUser"); err != nil {
 		return nil, err
 	}
 	return &holder.User, nil
@@ -230,7 +231,7 @@ func (c Client) Buy(amount float64, agreeBtcAmountVaries bool) (*transfer, error
 	if err := c.Post("buys", params, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "Buy"); err != nil {
+	if err := checkApiErrors(holder.response, "Buy"); err != nil {
 		return nil, err
 	}
 	return &holder.Transfer, nil
@@ -245,7 +246,7 @@ func (c Client) Sell(amount float64) (*transfer, error) {
 	if err := c.Post("sells", params, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "Sell"); err != nil {
+	if err := checkApiErrors(holder.response, "Sell"); err != nil {
 		return nil, err
 	}
 	return &holder.Transfer, nil
@@ -318,7 +319,7 @@ func (c Client) GetTransactions(page int) (*transactions, error) {
 		return nil, err
 	}
 	transactions := transactions{
-		PaginationStats: holder.PaginationStats,
+		paginationStats: holder.paginationStats,
 	}
 	// Remove one layer of nesting
 	for _, tx := range holder.Transactions {
@@ -337,7 +338,7 @@ func (c Client) GetOrders(page int) (*orders, error) {
 		return nil, err
 	}
 	orders := orders{
-		PaginationStats: holder.PaginationStats,
+		paginationStats: holder.paginationStats,
 	}
 	// Remove one layer of nesting
 	for _, o := range holder.Orders {
@@ -356,7 +357,7 @@ func (c Client) GetTransfers(page int) (*transfers, error) {
 		return nil, err
 	}
 	transfers := transfers{
-		PaginationStats: holder.PaginationStats,
+		paginationStats: holder.paginationStats,
 	}
 	// Remove one layer of nesting
 	for _, t := range holder.Transfers {
@@ -392,7 +393,7 @@ func (c Client) GetTransaction(id string) (*transaction, error) {
 	if err := c.Get("transactions/"+id, nil, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "GetTransaction"); err != nil {
+	if err := checkApiErrors(holder.response, "GetTransaction"); err != nil {
 		return nil, err
 	}
 	return &holder.Transaction, nil
@@ -404,7 +405,7 @@ func (c Client) GetOrder(id string) (*order, error) {
 	if err := c.Get("orders/"+id, nil, &holder); err != nil {
 		return nil, err
 	}
-	if err := checkApiErrors(holder.Response, "GetOrder"); err != nil {
+	if err := checkApiErrors(holder.response, "GetOrder"); err != nil {
 		return nil, err
 	}
 	return &holder.Order, nil
@@ -417,4 +418,21 @@ func (c Client) GetUser() (*user, error) {
 		return nil, err
 	}
 	return &holder.Users[0].User, nil
+}
+
+// checkApiErrors checks for errors returned by coinbase API JSON response
+// i.e { "success": false, "errors": ["Button with code code123456 does not exist"], ...}
+func checkApiErrors(resp response, method string) error {
+	if resp.Success == false { // Return errors received from API here
+		err := " in " + method + "()"
+		if resp.Errors != nil {
+			err = strings.Join(resp.Errors, ",") + err
+			return errors.New(err)
+		}
+		if resp.Error != "" { // Return errors received from API here
+			err = resp.Error + err
+			return errors.New(err)
+		}
+	}
+	return nil
 }

@@ -9,15 +9,15 @@ import (
 // ClientOAuthAuthentication Struct implements the Authentication interface
 // and takes care of authenticating OAuth RPC requests on behalf of a client
 // (i.e GetBalance())
-type ClientOAuthAuthentication struct {
+type clientOAuthAuthentication struct {
 	Tokens  *oauthTokens
 	BaseUrl string
 	Client  http.Client
 }
 
 // ClientOAuth instantiates ClientOAuthAuthentication with the client OAuth tokens
-func ClientOAuth(tokens *oauthTokens) *ClientOAuthAuthentication {
-	a := ClientOAuthAuthentication{
+func clientOAuth(tokens *oauthTokens) *clientOAuthAuthentication {
+	a := clientOAuthAuthentication{
 		Tokens:  tokens,
 		BaseUrl: "https://api.coinbase.com/v1/",
 		Client: http.Client{
@@ -31,19 +31,19 @@ func ClientOAuth(tokens *oauthTokens) *ClientOAuthAuthentication {
 
 // Client OAuth authentication requires us to attach an unexpired OAuth token to
 // the request header
-func (a ClientOAuthAuthentication) Authenticate(req *http.Request, endpoint string, params []byte) error {
+func (a clientOAuthAuthentication) authenticate(req *http.Request, endpoint string, params []byte) error {
 	// Ensure tokens havent expired
-	if time.Now().UTC().Unix() > a.Tokens.Expire_time {
+	if time.Now().UTC().Unix() > a.Tokens.ExpireTime {
 		return errors.New("The OAuth tokens are expired. Use refreshTokens to refresh them")
 	}
-	req.Header.Set("Authorization", "Bearer "+a.Tokens.Access_token)
+	req.Header.Set("Authorization", "Bearer "+a.Tokens.AccessToken)
 	return nil
 }
 
-func (a ClientOAuthAuthentication) GetBaseUrl() string {
+func (a clientOAuthAuthentication) getBaseUrl() string {
 	return a.BaseUrl
 }
 
-func (a ClientOAuthAuthentication) GetClient() *http.Client {
+func (a clientOAuthAuthentication) getClient() *http.Client {
 	return &a.Client
 }

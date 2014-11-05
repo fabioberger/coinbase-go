@@ -36,8 +36,8 @@ func TestGetReceiveAddressEndpoint(t *testing.T) {
 	t.Skip("Skipping GetReceiveAddressEndpoint in order not to create excessive amounts of receive addresses during testing.")
 	c := initClient()
 	params := &AddressParams{
-		Callback_url: "http://www.wealthlift.com",
-		Label:        "My Test Address",
+		CallbackUrl: "http://www.wealthlift.com",
+		Label:       "My Test Address",
 	}
 	address, err := c.GenerateReceiveAddress(params)
 	if err != nil {
@@ -56,23 +56,23 @@ func TestGetAllAddressesEndpoint(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	assert.IsType(t, "string", addresses.Addresses[0].Created_at)
+	assert.IsType(t, "string", addresses.Addresses[0].CreatedAt)
 	assert.IsType(t, "string", addresses.Addresses[0].Address)
 }
 
 func TestCreateButtonEndpoint(t *testing.T) {
 	c := initClient()
 	params := &button{
-		Name:               "test",
-		Type:               "buy_now",
-		Subscription:       false,
-		Price_string:       "1.23",
-		Price_currency_iso: "USD",
-		Custom:             "Order123",
-		Callback_url:       "http://www.example.com/my_custom_button_callback",
-		Description:        "Sample Description",
-		Style:              "custom_large",
-		Include_email:      true,
+		Name:             "test",
+		Type:             "buy_now",
+		Subscription:     false,
+		PriceString:      "1.23",
+		PriceCurrencyIso: "USD",
+		Custom:           "Order123",
+		CallbackUrl:      "http://www.example.com/my_custom_button_callback",
+		Description:      "Sample Description",
+		Style:            "custom_large",
+		IncludeEmail:     true,
 	}
 	data, err := c.CreateButton(params)
 	if err != nil {
@@ -81,7 +81,7 @@ func TestCreateButtonEndpoint(t *testing.T) {
 		}
 		t.Skip("Skip this test since user hasn't filled out their merchant profile yet.")
 	}
-	assert.IsType(t, "string", data.Embed_html)
+	assert.IsType(t, "string", data.EmbedHtml)
 	assert.IsType(t, "string", data.Type)
 }
 
@@ -118,7 +118,7 @@ func TestGetTransactionsEndpoint(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	assert.IsType(t, 1, data.Total_count)
+	assert.IsType(t, int64(1), data.TotalCount)
 	assert.IsType(t, "string", data.Transactions[0].Hsh)
 }
 

@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/fabioberger/coinbase-go?status.svg)](https://godoc.org/github.com/fabioberger/coinbase-go) 
+[![GoDoc](https://godoc.org/github.com/fabioberger/coinbase-go?status.svg)](https://godoc.org/github.com/fabioberger/coinbase-go)
 
 # Coinbase Go Client Library
 
@@ -54,7 +54,13 @@ if err != nil {
 fmt.Printf("Balance is %f BTC", balance)
 ```
 
-A working API key example is available in example/ApiKeyExample.go.
+A working API key example is available in example/ApiKeyExample.go. To run it, execute:
+
+`go run ./example/ApiKeyExample.go`
+
+## Error Handling
+
+All error handling returns the errors to the calling client method. Any API request for which coinbase returns an error encoded in the JSON response, this error will be parsed and the client method will return it as a Golang error object. Therefore error handling will always take place through the error ('err') variable returned by the client methods. Lastly, for Http requests, if the response code is not 200, an error will be returned to the client method detailing the response code that we received and for which particular request.
 
 ## Examples
 
@@ -84,7 +90,7 @@ fmt.Printf("Balance is %f BTC", balance)
 
 ### Send bitcoin
 
-`func (c Client) SendMoney(params *TransactionRequestParams) (*transactionConfirmation, error) `
+`func (c Client) SendMoney(params *TransactionParams) (*transactionConfirmation, error) `
 
 ```go
 params := &coinbase.TransactionParams{
@@ -104,26 +110,26 @@ fmt.Println(confirmation.Transaction.Id)
 
 The "To" parameter can also be a bitcoin address and the "Notes" parameter can be a note or description of the transaction.  Descriptions are only visible on Coinbase (not on the general bitcoin network).
 
-You can also send money in a number of currencies (see `getCurrencies()`).  The amount will be automatically converted to the correct BTC amount using the current exchange rate.
+You can also send money in a number of currencies (see `GetCurrencies()`).  The amount will be automatically converted to the correct BTC amount using the current exchange rate.
 
 All possible transaction parameters are detailed below:
 
 ```go
 type TransactionParams struct {
-	To                  string 
-	From                string 
-	Amount              string 
-	Amount_string       string 
-	Amount_currency_iso string 
-	Notes               string 
-	User_fee            string 
-	Referrer_id         string 
-	Idem                string 
-	Instant_buy         bool   
-	Order_id            string 
+	To                  string
+	From                string
+	Amount              string
+	AmountString       string
+	AmountCurrencyIso string
+	Notes               string
+	UserFee            string
+	ReferrerId         string
+	Idem                string
+	InstantBuy         bool
+	OrderId            string
 }
 ```
-For detailed information on each parameter, check out the ['send_money' documentation](https://www.coinbase.com/api/doc/1.0/transactions/send_money.html)
+Note that parameters are equivalent to those of the coinbase API except in camelcase rather then with underscores between words (Golang standard). This can also be assumed for accessing return values. For detailed information on each parameter, check out the ['send_money' documentation](https://www.coinbase.com/api/doc/1.0/transactions/send_money.html)
 
 ### Request bitcoin
 
@@ -131,7 +137,7 @@ This will send an email to the recipient, requesting payment, and give them an e
 
 ```go
 params := &coinbase.TransactionParams{
-	From:     "client@example.com",
+	From:   "client@example.com",
 	Amount: "2.5",
 	Notes:  "contractor hours in January (website redesign for 50 BTC)",
 }
@@ -178,9 +184,9 @@ response, err := c.GetTransactions(1)
 if err != nil {
 	log.Fatal(err)
 }
-fmt.Println(response.Current_page)
+fmt.Println(response.CurrentPage)
 // '1'
-fmt.Println(response.Num_pages)
+fmt.Println(response.NumPages)
 // '2'
 fmt.Println(response.Transactions[0].Id)
 // '5018f833f8182b129c00002f'
@@ -198,7 +204,7 @@ if err != nil {
 	log.Fatal(err)
 }
 fmt.Println(price.Subtotal.Amount) // Subtotal does not include fees
-// '303.00'  
+// '303.00'
 fmt.Println(price.Total.Amount) // Total includes coinbase & bank fee
 // '306.18'
 
@@ -207,7 +213,7 @@ if err != nil {
 	log.Fatal(err)
 }
 fmt.Println(price.Subtotal.Amount) // Subtotal is current market price
-// '9.90'  
+// '9.90'
 fmt.Println(price.Total.Amount) // Total is amount you will receive (after fees)
 // '9.65'
 ```
@@ -218,7 +224,7 @@ Buying and selling bitcoin requires you to [link and verify a bank account](http
 
 Then you can call `buy` or `sell` and pass a `quantity` of bitcoin you want to buy.
 
-On a buy, coinbase will debit your bank account and the bitcoin will arrive in your Coinbase account four business days later (this is shown as the `payout_date` below).  This is how long it takes for the bank transfer to complete and verify, although they are working on shortening this window. In some cases, they may not be able to guarantee a price, and buy requests will fail. In that case, set the second parameter (`agreeBtcAmountVaries`) to true in order to purchase bitcoin at the future market price when your money arrives.
+On a buy, coinbase will debit your bank account and the bitcoin will arrive in your Coinbase account four business days later (this is shown as the `payoutDate` below).  This is how long it takes for the bank transfer to complete and verify, although they are working on shortening this window. In some cases, they may not be able to guarantee a price, and buy requests will fail. In that case, set the second parameter (`agreeBtcAmountVaries`) to true in order to purchase bitcoin at the future market price when your money arrives.
 
 On a sell they will credit your bank account in a similar way and it will arrive within two business days.
 
@@ -235,8 +241,8 @@ fmt.Println(transfer.Btc.Amount)
 // '1.00000000'
 fmt.Println(transfer.Total.Amount)
 // '$361.55'
-fmt.Println(transfer.Payout_date)
-// '2013-02-01T18:00:00-08:00' (ISO 8601 format - can be parsed with time.Parse(payout_date, "2013-06-05T14:10:43.678Z"))
+fmt.Println(transfer.PayoutDate)
+// '2013-02-01T18:00:00-08:00' (ISO 8601 format - can be parsed with time.Parse(transfer.PayoutDate, "2013-06-05T14:10:43.678Z"))
 ```
 
 ```go
@@ -250,45 +256,45 @@ fmt.Println(transfer.Btc.Amount)
 // '1.00000000'
 fmt.Println(transfer.Total.Amount)
 // '$361.55'
-fmt.Println(transfer.Payout_date)
-// '2013-02-01T18:00:00-08:00' (ISO 8601 format - can be parsed with time.Parse(payout_date, "2013-06-05T14:10:43.678Z"))
+fmt.Println(transfer.PayoutDate)
+// '2013-02-01T18:00:00-08:00' (ISO 8601 format - can be parsed with time.Parse(transfer.PayoutDate, "2013-06-05T14:10:43.678Z"))
 ```
 
 ### Create a payment button
 
 This will create the code for a payment button (and modal window) that you can use to accept bitcoin on your website.  You can read [more about payment buttons here and try a demo](https://coinbase.com/docs/merchant_tools/payment_buttons).
 
-The allowed ButtonParams are: 
+The allowed ButtonParams are:
 
 ```go
 type button struct {
-	Name                  string 
-	Price_string          string 
-	Price_currency_iso    string
-	Type                  string 
-	Subscription          bool   
-	Repeat                string 
-	Style                 string 
-	Text                  string 
-	Description           string 
-	Custom                string 
-	Custom_secure         bool   
-	Callback_url          string 
-	Success_url           string 
-	Cancel_url            string 
-	Info_url              string 
-	Auto_redirect         bool   
-	Auto_redirect_success bool   
-	Auto_redirect_cancel  bool   
-	Variable_price        bool   
-	Choose_price          bool   
-	Include_address       bool   
-	Include_email         bool   
-	Price1                string 
-	Price2                string 
-	Price3                string 
-	Price4                string 
-	Price5                string 
+	Name                  string
+	PriceString          string
+	PriceCurrencyIso    string
+	Type                  string
+	Subscription          bool
+	Repeat                string
+	Style                 string
+	Text                  string
+	Description           string
+	Custom                string
+	CustomSecure         bool
+	CallbackUrl          string
+	SuccessUrl           string
+	CancelUrl            string
+	InfoUrl              string
+	AutoRedirect         bool
+	AutoRedirectSuccess bool
+	AutoRedirectCancel  bool
+	VariablePrice        bool
+	ChoosePrice          bool
+	IncludeAddress       bool
+	IncludeEmail         bool
+	Price1                string
+	Price2                string
+	Price3                string
+	Price4                string
+	Price5                string
 }
 ```
 The `custom` param will get passed through in [callbacks](https://coinbase.com/docs/merchant_tools/callbacks) to your site.  The list of valid `options` [are described here](https://coinbase.com/api/doc/1.0/buttons/create.html).
@@ -300,13 +306,13 @@ params := &button{
 	Name:               "test",
 	Type:               "buy_now",
 	Subscription:       false,
-	Price_string:       "1.23",
-	Price_currency_iso: "USD",
+	PriceString:       "1.23",
+	PriceCurrencyIso: "USD",
 	Custom:             "Order123",
-	Callback_url:       "http://www.example.com/my_custom_button_callback",
+	CallbackUrl:       "http://www.example.com/my_custom_button_callback",
 	Description:        "Sample Description",
 	Style:              "custom_large",
-	Include_email:      true,
+	IncludeEmail:      true,
 }
 button, err := c.CreateButton(params)
 if err != nil {
@@ -314,7 +320,7 @@ if err != nil {
 }
 fmt.Println(button.Code)
 // '93865b9cae83706ae59220c013bc0afd'
-fmt.Println(button.Embed_html)
+fmt.Println(button.EmbedHtml)
 // '<div class=\"coinbase-button\" data-code=\"93865b9cae83706ae59220c013bc0afd\"></div><script src=\"https://coinbase.com/assets/button.js\" type=\"text/javascript\"></script>'
 ```
 
@@ -362,7 +368,7 @@ if err != nil {
 }
 fmt.Println(user.Email)
 // 'newuser@example.com'
-fmt.Println(user.Receive_address)
+fmt.Println(user.ReceiveAddress)
 // 'mpJKwdmJKYjiyfNo26eRp4j6qGwuUUnw9x'
 ```
 
@@ -376,8 +382,8 @@ The allowed ContactsParams are:
 
 ```go
 type ContactsParams struct {
-	Page  int 
-	Limit int  
+	Page  int
+	Limit int
 	Query string
 }
 ```
@@ -430,7 +436,7 @@ header("Location: " . o.CreateAuthorizeUrl(scope));
 After the user has authorized your application, they will be redirected back to the redirect URL specified above. A `code` parameter will be included - pass this into `GetTokens` to receive a set of tokens:
 
 ```go
-query := req.URL.Query() 
+query := req.URL.Query()
 code := query.Get("code")
 tokens, err := o.GetTokens(code, "authorization_code")
 if err != nil {
@@ -477,8 +483,8 @@ In order to run the tests for this library, you will first need to install the T
 
 To run the test suite, execute the following in your command line:
 
- `go test ./... -v`
- 
+ `go test . -v`
+
 
 
 

@@ -10,13 +10,13 @@ import (
 // ServiceOAuthAuthentication Struct implements the Authentication interface
 // and takes care of authenticating OAuth RPC requests on behalf of the service
 // (i.e GetTokens())
-type ServiceOAuthAuthentication struct {
+type serviceOAuthAuthentication struct {
 	BaseUrl string
 	Client  http.Client
 }
 
 // ServiceOAuth instantiates ServiceOAuthAuthentication with the coinbase certificate file
-func ServiceOAuth(certFilePath string) (*ServiceOAuthAuthentication, error) {
+func serviceOAuth(certFilePath string) (*serviceOAuthAuthentication, error) {
 	// First we read the cert
 	certs := x509.NewCertPool()
 	pemData, err := ioutil.ReadFile(certFilePath)
@@ -27,7 +27,7 @@ func ServiceOAuth(certFilePath string) (*ServiceOAuthAuthentication, error) {
 	mTLSConfig := &tls.Config{
 		RootCAs: certs, //Add the cert as a TLS config
 	}
-	a := ServiceOAuthAuthentication{
+	a := serviceOAuthAuthentication{
 		BaseUrl: "https://coinbase.com/",
 		Client: http.Client{
 			Transport: &http.Transport{
@@ -41,14 +41,14 @@ func ServiceOAuth(certFilePath string) (*ServiceOAuthAuthentication, error) {
 
 // Service OAuth authentication requires no additional headers to be sent. The
 // Coinbase Public Certificate is set as a TLS config in the http.Client
-func (a ServiceOAuthAuthentication) Authenticate(req *http.Request, endpoint string, params []byte) error {
+func (a serviceOAuthAuthentication) authenticate(req *http.Request, endpoint string, params []byte) error {
 	return nil // No additional headers needed for service OAuth requests
 }
 
-func (a ServiceOAuthAuthentication) GetBaseUrl() string {
+func (a serviceOAuthAuthentication) getBaseUrl() string {
 	return a.BaseUrl
 }
 
-func (a ServiceOAuthAuthentication) GetClient() *http.Client {
+func (a serviceOAuthAuthentication) getClient() *http.Client {
 	return &a.Client
 }

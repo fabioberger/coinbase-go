@@ -9,7 +9,7 @@ import (
 // Initialize the client with mock mode enabled on rpc
 // All calls return the corresponding json response from the test_data files
 func initTestClient() Client {
-	return ApiKeyClientTest(os.Getenv("COINBASE_KEY"), os.Getenv("COINBASE_SECRET"))
+	return apiKeyClientTest(os.Getenv("COINBASE_KEY"), os.Getenv("COINBASE_SECRET"))
 }
 
 // About Mock Tests:
@@ -44,9 +44,9 @@ func TestGetAllAddressesParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "GetAllAddressesParse", "2013-05-09T23:07:08-07:00", addresses.Addresses[0].Created_at)
+	compareString(t, "GetAllAddressesParse", "2013-05-09T23:07:08-07:00", addresses.Addresses[0].CreatedAt)
 	compareString(t, "GetAllAddressesParse", "mwigfecvyG4MZjb6R5jMbmNcs7TkzhUaCj", addresses.Addresses[1].Address)
-	compareInt(t, "GetAllAddressesParse", 1, int64(addresses.Num_pages))
+	compareInt(t, "GetAllAddressesParse", 1, int64(addresses.NumPages))
 }
 
 func TestCreateButtonParse(t *testing.T) {
@@ -68,7 +68,7 @@ func TestSendMoneyParse(t *testing.T) {
 		log.Fatal(err)
 	}
 	compareString(t, "SendMoneyParse", "-1.23400000", data.Transaction.Amount.Amount)
-	compareString(t, "SendMoneyParse", "37muSN5ZrukVTvyVh3mT5Zc5ew9L9CBare", data.Transaction.Recipient_address)
+	compareString(t, "SendMoneyParse", "37muSN5ZrukVTvyVh3mT5Zc5ew9L9CBare", data.Transaction.RecipientAddress)
 }
 
 func TestRequestMoneyParse(t *testing.T) {
@@ -135,8 +135,8 @@ func TestBuyParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "Buys", "2013-01-28T16:08:58-08:00", data.Created_at)
-	compareString(t, "Buys", "USD", data.Fees.Bank.Currency_iso)
+	compareString(t, "Buys", "2013-01-28T16:08:58-08:00", data.CreatedAt)
+	compareString(t, "Buys", "USD", data.Fees.Bank.CurrencyIso)
 	compareString(t, "Buys", "13.55", data.Subtotal.Amount)
 }
 
@@ -146,8 +146,8 @@ func TestSellParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	compareString(t, "Sells", "2013-01-28T16:32:35-08:00", data.Created_at)
-	compareString(t, "Sells", "USD", data.Fees.Bank.Currency_iso)
+	compareString(t, "Sells", "2013-01-28T16:32:35-08:00", data.CreatedAt)
+	compareString(t, "Sells", "USD", data.Fees.Bank.CurrencyIso)
 	compareString(t, "Sells", "13.50", data.Subtotal.Amount)
 }
 
@@ -170,6 +170,7 @@ func TestGetTransactionsParse(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	compareInt(t, "GetTransactions", 2, data.TotalCount)
 	compareString(t, "GetTransactions", "5018f833f8182b129c00002f", data.Transactions[0].Id)
 	compareString(t, "GetTransactions", "-1.00000000", data.Transactions[1].Amount.Amount)
 }
@@ -191,7 +192,7 @@ func TestGetTransfersParse(t *testing.T) {
 		log.Fatal(err)
 	}
 	compareString(t, "GetTransfers", "BTC", data.Transfers[0].Btc.Currency)
-	compareInt(t, "GetTransfers", int64(1), int64(data.Num_pages))
+	compareInt(t, "GetTransfers", int64(1), int64(data.NumPages))
 }
 
 func TestGetTransaction(t *testing.T) {
@@ -212,7 +213,7 @@ func TestGetOrder(t *testing.T) {
 		log.Fatal(err)
 	}
 	compareString(t, "GetTransaction", "A7C52JQT", data.Id)
-	compareString(t, "GetTransaction", "BTC", data.Total_btc.Currency_iso)
+	compareString(t, "GetTransaction", "BTC", data.TotalBtc.CurrencyIso)
 	compareString(t, "GetTransaction", "test", data.Button.Name)
 }
 
@@ -224,7 +225,7 @@ func TestGetUser(t *testing.T) {
 	}
 	compareString(t, "GetTransaction", "512db383f8182bd24d000001", data.Id)
 	compareString(t, "GetTransaction", "49.76000000", data.Balance.Amount)
-	compareString(t, "GetTransaction", "Company Name, Inc.", data.Merchant.Company_name)
+	compareString(t, "GetTransaction", "Company Name, Inc.", data.Merchant.CompanyName)
 }
 
 func compareFloat(t *testing.T, prefix string, expected float64, got float64) {

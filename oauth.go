@@ -1,6 +1,7 @@
 package coinbase
 
 import (
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -11,13 +12,13 @@ type OAuth struct {
 	ClientId     string
 	ClientSecret string
 	RedirectUri  string
-	Rpc          Rpc
+	Rpc          rpc
 }
 
 // OAuthService Instantiates OAuth Struct in order to send service related OAuth requests
 func OAuthService(clientId string, clientSecret string, redirectUri string) (*OAuth, error) {
-	certFilePath := BasePath + "/ca-coinbase.crt"
-	serviceAuth, err := ServiceOAuth(certFilePath)
+	certFilePath := basePath + "/ca-coinbase.crt"
+	serviceAuth, err := serviceOAuth(certFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +26,7 @@ func OAuthService(clientId string, clientSecret string, redirectUri string) (*OA
 		ClientId:     clientId,
 		ClientSecret: clientSecret,
 		RedirectUri:  redirectUri,
-		Rpc: Rpc{
+		Rpc: rpc{
 			auth: serviceAuth,
 			mock: false,
 		},
@@ -34,7 +35,8 @@ func OAuthService(clientId string, clientSecret string, redirectUri string) (*OA
 }
 
 // CreateAuthorizeUrl create the Authorize Url used to redirect users for
-// coinbase app authorization
+// coinbase app authorization. The scope parameter includes the specific
+// permissions one wants to ask from the user
 func (o OAuth) CreateAuthorizeUrl(scope []string) string {
 	Url, _ := url.Parse("https://coinbase.com")
 	Url.Path += "/oauth/authorize"
@@ -60,6 +62,14 @@ func (o OAuth) NewTokens(code string) (*oauthTokens, error) {
 	return o.GetTokens(code, "authorization_code")
 }
 
+// NewTokensRequest generates new tokens for OAuth user given an http request
+// containing the query parameter 'code'
+func (o OAuth) NewTokensFromRequest(req *http.Request) (*oauthTokens, error) {
+	query := req.URL.Query()
+	code := query.Get("code")
+	return o.GetTokens(code, "authorization_code")
+}
+
 // GetTokens gets tokens for an OAuth user specifying a grantType (i.e authorization_code)
 func (o OAuth) GetTokens(code string, grantType string) (*oauthTokens, error) {
 
@@ -82,9 +92,9 @@ func (o OAuth) GetTokens(code string, grantType string) (*oauthTokens, error) {
 	}
 
 	tokens := oauthTokens{
-		Access_token:  holder.Access_token,
-		Refresh_token: holder.Refresh_token,
-		Expire_time:   time.Now().UTC().Unix() + holder.Expires_in,
+		AccessToken:  holder.AccessToken,
+		RefreshToken: holder.RefreshToken,
+		ExpireTime:   time.Now().UTC().Unix() + holder.ExpiresIn,
 	}
 
 	return &tokens, nil

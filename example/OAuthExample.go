@@ -1,53 +1,71 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 
-	"github.com/codegangsta/negroni"
 	"github.com/fabioberger/coinbase-go"
+	"github.com/go-martini/martini"
 )
 
 var o *coinbase.OAuth
 
 func main() {
-	mux := http.NewServeMux()
-	o, err := coinbase.OAuthService(os.Getenv("COINBASE_CLIENT_ID"), os.Getenv("COINBASE_CLIENT_SECRET"), "https://localhost:3000/tokens")
+	m := martini.New()
+	m.Use(martini.Logger())
+	m.Use(martini.Recovery())
+	m.Use(martini.Static("public"))
+	r := martini.NewRouter()
+	m.MapTo(r, (*martini.Routes)(nil))
+	m.Action(r.Handle)
+
+	// Instantiate OAuthService with the OAuth App Client Id & Secret from the Environment Variables
+	o, err := coinbase.OAuthService(os.Getenv("COINBASE_CLIENT_ID"), os.Getenv("COINBASE_CLIENT_SECRET"), "https://localhost:8443/tokens")
 	if err != nil {
 		panic(err)
 		return
 	}
-	// At http://localhost:3000/ we will display an "authorize" link
-	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+
+	// At https://localhost:8443/ we will display an "authorize" link
+	r.Get("/", func() string {
 		authorizeUrl := o.CreateAuthorizeUrl([]string{
 			"all",
 		})
 		link := "<a href='" + authorizeUrl + "'>authorize</a>"
-		fmt.Fprintln(w, link)
+		return link
 	})
 
-	// AuthorizeUrl redirects to https://localhost:3000/tokens with 'code' in its
+	// AuthorizeUrl redirects to https://localhost:8443/tokens with 'code' in its
 	// query params. If you dont have SSL enabled, replace 'https' with 'http'
 	// and reload the page. If successful, the user's balance will show
-	mux.HandleFunc("/tokens", func(w http.ResponseWriter, req *http.Request) {
+	r.Get("/tokens", func(res http.ResponseWriter, req *http.Request) string {
 		// Get the tokens given the 'code' query param
 		tokens, err := o.NewTokensFromRequest(req) // Will use 'code' query param from req
 		if err != nil {
-			fmt.Fprintln(w, err)
-			return
+			return err.Error()
 		}
 		// instantiate the OAuthClient
 		c := coinbase.OAuthClient(tokens)
 		amount, err := c.GetBalance()
 		if err != nil {
-			fmt.Fprintln(w, err)
-			return
+			return err.Error()
 		}
-		fmt.Fprintln(w, amount)
+		return strconv.FormatFloat(amount, 'f', 6, 64)
 	})
 
-	n := negroni.Classic()
-	n.UseHandler(mux)
-	n.Run(":3000")
+	// HTTP
+	go func() {
+		if err := http.ListenAndServe(":8080", m); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// HTTPS
+	// To generate a development cert and key, run the following from your *nix terminal:
+	// go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host="localhost"
+	if err := http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", m); err != nil {
+		log.Fatal(err)
+	}
 }

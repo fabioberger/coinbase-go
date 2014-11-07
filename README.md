@@ -10,7 +10,7 @@ This library supports both the [API key authentication method](https://coinbase.
 
 Make sure you have set the environment variable $GOPATH
 
-	export GOPATH=path/to/your/go/folder
+	export GOPATH="path/to/your/go/folder"
 
 Obtain the latest version of the Coinbase Go library with:
 
@@ -419,9 +419,9 @@ fmt.Println(balance)
 
 Or feel free to add a new wrapper method and submit a pull request.
 
-## OAuth Authentication
+# OAuth Authentication
 
-To authenticate with OAuth, first create an OAuth application at https://coinbase.com/oauth/applications.
+To authenticate with OAuth, first create an OAuth application at [https://coinbase.com/oauth/applications](https://coinbase.com/oauth/applications).
 When a user wishes to connect their Coinbase account, redirect them to a URL created with `func (o OAuth) CreateAuthorizeUrl(scope []string) string`:
 
 ```go
@@ -458,16 +458,22 @@ A full example implementation is available in the `example` directory. In order 
 
 `go get github.com/codegangsta/negroni`
 
-You will also need to set your coinbase application client_id and client_secret as environment variables by adding these lines to your bash config file (i.e ~/.bashrc, ~/.bash_profile, etc...):
+You will also need to set your coinbase application client_id and client_secret as environment variables by adding these environment variables to your bash config file (i.e ~/.bashrc, ~/.bash_profile, etc...) and reload them:
 
 `export COINBASE_CLIENT_ID="YOUR_CLIENT_ID"`
 `export COINBASE_CLIENT_SECRET="YOUR_CLIENT_SECRET"`
 
-Once you have done this, reload your bash configs and run the example:
-
 `source ~/.bash_profile`
 
+The last step we need to take is to generate a cert and key pair in order to run our OAuth server over SSL. To do this, run the following command from within the example directory:
+
+`go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host="localhost"`
+
+Once you have done this, reload your bash configs and run the example:
+
 `go run OAuthExample.go`
+
+For a more indepth tutorial on the OAuth Example, visit this step-by-step [blog post tutorial](http://fabioberger.com/blog/2014/11/06/building-a-coinbase-app-in-go/#oauth).
 
 ## Security notes
 

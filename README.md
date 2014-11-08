@@ -413,6 +413,10 @@ Or feel free to add a new wrapper method and submit a pull request.
 
 # OAuth Authentication
 
+For an indepth tutorial on how to implement OAuth Authentication, visit this [step-by-step  tutorial](http://fabioberger.com/blog/2014/11/06/building-a-coinbase-app-in-go/#oauth).
+
+## Higher Level Overview
+
 To authenticate with OAuth, first create an OAuth application at [https://coinbase.com/oauth/applications](https://coinbase.com/oauth/applications).
 When a user wishes to connect their Coinbase account, redirect them to a URL created with `func (o OAuth) CreateAuthorizeUrl(scope []string) string`:
 
@@ -465,7 +469,6 @@ Once you have done this, reload your bash configs and run the example:
 
 `go run OAuthExample.go`
 
-For a more indepth tutorial on the OAuth Example, visit this step-by-step [blog post tutorial](http://fabioberger.com/blog/2014/11/06/building-a-coinbase-app-in-go/#oauth).
 
 ## Security notes
 

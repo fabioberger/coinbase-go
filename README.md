@@ -28,21 +28,13 @@ import (
 
 Start by [enabling an API Key on your account](https://coinbase.com/settings/api).
 
-Next, set the API keys as environment variables in your bash config file (i.e ~/.bash_profile, ~/.bashrc, etc.) with these lines:
-
-`export COINBASE_KEY="YOUR_COINBASE_KEY"`
-
-`export COINBASE_SECRET="YOUR_COINBASE_SECRET"`
-
-Save this file and reload your bash configs with:
-
-`source ~/.bash_profile # .bashrc, etc.`
-
-Now, create an instance of the client using the `ApiKeyClient` method:
+Next, create an instance of the client using the `ApiKeyClient` method:
 
 ```go
 c := coinbase.ApiKeyClient(os.Getenv("COINBASE_KEY"), os.Getenv("COINBASE_SECRET"))
 ```
+
+Notice here that we did not hard code the API key into our codebase, but set it in an environment variable instead.  This is just one example, but keeping your credentials separate from your code base is a good [security practice](https://coinbase.com/docs/api/overview#security). Here is a [step-by-step guide](http://fabioberger.com/blog/2014/11/06/building-a-coinbase-app-in-go/#env) on how to add these environment variables to your shell config file.
 
 Now you can call methods on `c` similar to the ones described in the [API reference](https://coinbase.com/api/doc).  For example:
 
@@ -60,7 +52,7 @@ A working API key example is available in example/ApiKeyExample.go. To run it, e
 
 ## Error Handling
 
-All error handling returns the errors to the calling client method. Any API request for which coinbase returns an error encoded in the JSON response, this error will be parsed and the client method will return it as a Golang error object. Therefore error handling will always take place through the error ('err') variable returned by the client methods. Lastly, for Http requests, if the response code is not 200, an error will be returned to the client method detailing the response code that we received and for which particular request.
+All error handling returns the errors to the calling client method. Any API request for which coinbase returns an error encoded in the JSON response, this error will be parsed and the client method will return it as a Golang error struct. Therefore error handling will always take place through the error ('err') variable returned by the client methods. Lastly, it is important to note that for HTTP requests, if the response code is not '200 OK', an error will be returned to the client method detailing the response code that was received.
 
 ## Examples
 
@@ -137,7 +129,7 @@ This will send an email to the recipient, requesting payment, and give them an e
 
 ```go
 params := &coinbase.TransactionParams{
-	From:   "client@example.com",
+	From:   "client@example.com", //Who are you requesting Bitcoins from
 	Amount: "2.5",
 	Notes:  "contractor hours in January (website redesign for 50 BTC)",
 }

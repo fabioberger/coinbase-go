@@ -388,7 +388,7 @@ type ContactsParams struct {
 ```
 
 ```go
-params := &ContactsParams{
+params := &coinbase.ContactsParams{
 	Page:  1,
 	Limit: 5,
 	Query: "user",

@@ -505,9 +505,7 @@ In order to run the tests for this library, you will first need to install the T
 
 Then run the tests by executing the following in your command line:
 
- ```bash
- go test . -v
- ```
+ `go test . -v`
 
 
 

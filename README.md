@@ -18,7 +18,9 @@ export GOPATH="path/to/your/go/folder"
 
 Obtain the latest version of the Coinbase Go library with:
 
-    go get github.com/fabioberger/coinbase-go
+```bash
+go get github.com/fabioberger/coinbase-go
+```
 
 Then, add the following to your Go project:
 
@@ -457,22 +459,34 @@ if err != nil {
 
 A full example implementation is available in the `example` directory. In order to run this example implementation, you will need to install the following dependency:
 
-`go get github.com/go-martini/martini`
+```bash
+go get github.com/go-martini/martini
+```
 
 You will also need to set your coinbase application client_id and client_secret as environment variables by adding these environment variables to your bash config file (i.e ~/.bashrc, ~/.bash_profile, etc...) and reload them:
 
-`export COINBASE_CLIENT_ID="YOUR_CLIENT_ID"`
-`export COINBASE_CLIENT_SECRET="YOUR_CLIENT_SECRET"`
+```bash
+export COINBASE_CLIENT_ID="YOUR_CLIENT_ID"
+```
+```bash
+export COINBASE_CLIENT_SECRET="YOUR_CLIENT_SECRET"
+```
 
-`source ~/.bash_profile`
+```bash
+source ~/.bash_profile
+```
 
 The last step we need to take is to generate a cert and key pair in order to run our OAuth server over SSL. To do this, run the following command from within the example directory:
 
-`go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host="localhost"`
+```bash
+go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host="localhost"
+```
 
 Once you have done this, run the example:
 
-`go run OAuthExample.go`
+```bash
+go run OAuthExample.go
+```
 
 
 ## Security notes
@@ -485,11 +499,15 @@ For this reason, API access is disabled on all Coinbase accounts by default.  If
 
 In order to run the tests for this library, you will first need to install the Testify/Assert dependency with the following command:
 
- `go get github.com/stretchr/testify/assert`
+ ```bash
+ go get github.com/stretchr/testify/assert
+ ```
 
 Then run the tests by executing the following in your command line:
 
- `go test . -v`
+ ```bash
+ go test . -v
+ ```
 
 
 

@@ -266,7 +266,7 @@ This will create the code for a payment button (and modal window) that you can u
 The allowed ButtonParams are:
 
 ```go
-type button struct {
+type Button struct {
 	Name                string
 	PriceString         string
 	PriceCurrencyIso    string
@@ -301,7 +301,7 @@ The `custom` param will get passed through in [callbacks](https://coinbase.com/d
 For detailed information on each parameter, check out the ['buttons' documentation](https://www.coinbase.com/api/doc/1.0/buttons/create.html)
 
 ```go
-params := &button{
+params := &coinbase.Button{
 		Name:             "test",
 		Type:             "buy_now",
 		Subscription:     false,
@@ -323,7 +323,7 @@ fmt.Println(button.EmbedHtml)
 // '<div class=\"coinbase-button\" data-code=\"93865b9cae83706ae59220c013bc0afd\"></div><script src=\"https://coinbase.com/assets/button.js\" type=\"text/javascript\"></script>'
 ```
 
-### Exchange rates and currency utilties
+### Exchange rates and currency utilities
 
 You can fetch a list of all supported currencies and ISO codes with the `GetCurrencies()` method.
 
@@ -397,7 +397,7 @@ contacts, err := c.GetContacts(params)
 if err != nil {
 	log.Fatal(err)
 }
-fmt.Println(string.Join(contacts.Emails, ","))
+fmt.Println(strings.Join(contacts.Emails, ","))
 // 'user1@example.com, user2@example.com'
 ```
 

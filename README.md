@@ -82,7 +82,7 @@ amount, err := c.GetBalance()
 if err != nil {
 	log.Fatal(err)
 }
-fmt.Printf("Balance is %f BTC", balance)
+fmt.Printf("Balance is %f BTC", amount)
 // 'Balance is 24.229801 BTC'
 ```
 

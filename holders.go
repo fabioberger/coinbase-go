@@ -36,7 +36,7 @@ type ordersHolder struct {
 // buttonHolder used to marshal the JSON request returned in CreateButton
 type buttonHolder struct {
 	response
-	Button button `json:"button,omitempty"`
+	Button Button `json:"button,omitempty"`
 }
 
 // transfersHolder used to marshal the JSON request returned in GetTransfers

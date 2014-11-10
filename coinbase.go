@@ -175,9 +175,9 @@ func (c Client) CompleteRequest(id string) (*transactionConfirmation, error) {
 }
 
 // CreateButton gets a new payment button including EmbedHtml as a field on button struct
-func (c Client) CreateButton(params *button) (*button, error) {
+func (c Client) CreateButton(params *Button) (*Button, error) {
 	finalParams := &struct {
-		Button *button `json:"button"`
+		Button *Button `json:"button"`
 	}{
 		Button: params,
 	}

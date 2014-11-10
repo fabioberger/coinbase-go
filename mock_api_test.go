@@ -51,7 +51,7 @@ func TestGetAllAddressesParse(t *testing.T) {
 
 func TestCreateButtonParse(t *testing.T) {
 	c := initTestClient()
-	params := &button{}
+	params := &Button{}
 	data, err := c.CreateButton(params)
 	if err != nil {
 		log.Fatal(err)

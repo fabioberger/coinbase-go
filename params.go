@@ -82,7 +82,7 @@ type contact struct {
 }
 
 // The return response from CreateButton
-type button struct {
+type Button struct {
 	Name                string `json:"name,omitempty"`
 	PriceString         string `json:"price_string,omitempty"`
 	PriceCurrencyIso    string `json:"price_currency_iso,omitempty"`
@@ -248,6 +248,6 @@ type order struct {
 	TotalNative    fee         `json:"total_native,omitempty"`
 	Custom         string      `json:"custom,omitempty"`
 	ReceiveAddress string      `json:"receive_address,omitempty"`
-	Button         button      `json:"button,omitempty"`
+	Button         Button      `json:"button,omitempty"`
 	Transaction    transaction `json:"transaction,omitempty"`
 }

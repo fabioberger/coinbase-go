@@ -188,8 +188,8 @@ type amount struct {
 
 // The sub-structure of a response denominating a fee
 type fee struct {
-	Cents       int64  `json:"cents,omitempty"`
-	CurrencyIso string `json:"currency_iso,omitempty"`
+	Cents       float64 `json:"cents,omitempty"`
+	CurrencyIso string  `json:"currency_iso,omitempty"`
 }
 
 // The sub-structure of a response denominating fees

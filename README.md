@@ -6,11 +6,15 @@ An easy way to buy, send, and accept [bitcoin](http://en.wikipedia.org/wiki/Bitc
 
 This library supports both the [API key authentication method](https://coinbase.com/docs/api/overview) and OAuth. The below examples use an API key - for instructions on how to use OAuth, see [OAuth Authentication](#oauth-authentication).
 
+A detailed step-by-step tutorial on how to use this library can be found at [this blog](http://fabioberger.com/blog/2014/11/06/building-a-coinbase-app-in-go/).
+
 ## Installation
 
 Make sure you have set the environment variable $GOPATH
 
-	export GOPATH="path/to/your/go/folder"
+```bash
+export GOPATH="path/to/your/go/folder"
+```
 
 Obtain the latest version of the Coinbase Go library with:
 
@@ -52,7 +56,7 @@ A working API key example is available in example/ApiKeyExample.go. To run it, e
 
 ## Error Handling
 
-All error handling returns the errors to the calling client method. Any API request for which coinbase returns an error encoded in the JSON response, this error will be parsed and the client method will return it as a Golang error struct. Therefore error handling will always take place through the error ('err') variable returned by the client methods. Lastly, it is important to note that for HTTP requests, if the response code is not '200 OK', an error will be returned to the client method detailing the response code that was received.
+All errors generated at runtime will be returned to the calling client method. Any API request for which Coinbase returns an error encoded in a JSON response will be parsed and returned by the client method as a Golang error struct. Lastly, it is important to note that for HTTP requests, if the response code returned is not '200 OK', an error will be returned to the client method detailing the response code that was received.
 
 ## Examples
 
@@ -165,6 +169,7 @@ if err != nil {
 	log.Fatal(err)
 }
 fmt.Println(success)
+// 'true'
 ```
 
 ### List your current transactions
@@ -398,7 +403,7 @@ fmt.Println(string.Join(contacts.Emails, ","))
 
 You can see a [list of method calls here](https://github.com/fabioberger/coinbase-go/blob/master/coinbase.go) and how they are implemented.  They are all wrappers around the [Coinbase JSON API](https://coinbase.com/api/doc).
 
-If there are any methods listed in the [API Reference](https://coinbase.com/api/doc) that don't have an explicit function name in the library, you can also call `get`, `post`, `put`, or `delete` with a `path`, `params` and holder struct for a quick implementation. Holder should be a pointer to some data structure. The library will attempt to unmarshal the response from the server into holder. For example:
+If there are any methods listed in the [API Reference](https://coinbase.com/api/doc) that don't have an explicit function name in the library, you can also call `Get`, `Post`, `Put`, or `Delete` with a `path`, `params` and holder struct for a quick implementation. Holder should be a pointer to some data structure that correctly reflects the structure of the returned JSON response. The library will attempt to unmarshal the response from the server into holder. For example:
 
 ```go
 balance := map[string]string{} // Holder struct depends on JSON format returned from API
@@ -421,7 +426,7 @@ To authenticate with OAuth, first create an OAuth application at [https://coinba
 When a user wishes to connect their Coinbase account, redirect them to a URL created with `func (o OAuth) CreateAuthorizeUrl(scope []string) string`:
 
 ```go
-o, err := coinbase.OAuthService(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
+o, err := coinbase.OAuthService(YOUR_CLIENT_ID, YOUR_CLIENT_SECRET, YOUR_REDIRECT_URL)
 if err != nil {
 	log.Fatal(err)
 }
@@ -452,7 +457,7 @@ if err != nil {
 
 A full example implementation is available in the `example` directory. In order to run this example implementation, you will need to install the following dependency:
 
-`go get github.com/codegangsta/negroni`
+`go get github.com/go-martini/martini`
 
 You will also need to set your coinbase application client_id and client_secret as environment variables by adding these environment variables to your bash config file (i.e ~/.bashrc, ~/.bash_profile, etc...) and reload them:
 
@@ -465,7 +470,7 @@ The last step we need to take is to generate a cert and key pair in order to run
 
 `go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host="localhost"`
 
-Once you have done this, reload your bash configs and run the example:
+Once you have done this, run the example:
 
 `go run OAuthExample.go`
 
@@ -482,7 +487,7 @@ In order to run the tests for this library, you will first need to install the T
 
  `go get github.com/stretchr/testify/assert`
 
-To run the test suite, execute the following in your command line:
+Then run the tests by executing the following in your command line:
 
  `go test . -v`
 

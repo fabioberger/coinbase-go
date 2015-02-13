@@ -45,7 +45,7 @@ func (r rpc) Request(method string, endpoint string, params interface{}, holder 
 	if err != nil {
 		return err
 	}
-
+	fmt.Println(string(data))
 	if err := json.Unmarshal(data, &holder); err != nil {
 		return err
 	}

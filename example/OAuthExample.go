@@ -31,7 +31,8 @@ func main() {
 	// At https://localhost:8443/ we will display an "authorize" link
 	r.Get("/", func() string {
 		authorizeUrl := o.CreateAuthorizeUrl([]string{
-			"all",
+			"user",
+			"balance",
 		})
 		link := "<a href='" + authorizeUrl + "'>authorize</a>"
 		return link

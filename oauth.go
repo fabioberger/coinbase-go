@@ -45,8 +45,8 @@ func (o OAuth) CreateAuthorizeUrl(scope []string) string {
 	parameters.Add("response_type", "code")
 	parameters.Add("client_id", o.ClientId)
 	parameters.Add("redirect_uri", o.RedirectUri)
+	parameters.Add("scope", strings.Join(scope, " "))
 	Url.RawQuery = parameters.Encode()
-	Url.RawQuery += "&scope=" + strings.Join(scope, "+")
 
 	return Url.String()
 }

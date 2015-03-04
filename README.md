@@ -511,12 +511,15 @@ Then run all tests by executing the following in your command line:
 For environment specific test use :
 
 Endpoint(Live) :
+
 	go test . -v -test.run=TestEndpoint
 
 Sandbox :
+
 	go test . -v -test.run=TestSandbox
 
 Mock :
+
 	go test . -v -test.run=TestMock
 
 

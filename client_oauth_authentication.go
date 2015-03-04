@@ -22,9 +22,11 @@ func clientOAuth(tokens *oauthTokens) *clientOAuthAuthentication {
 
 // ClientOAuthWithEnv instantiates ClientOAuthAuthentication with the client OAuth tokens and the specified environment
 func clientOAuthWithEnv(tokens *oauthTokens, sandbox bool) *clientOAuthAuthentication {
-	baseUrl := "https://api.coinbase.com/v1/"
+	baseUrl := "https://api.coinbase.com/v1/" // Live Url
+	
+	// Check if should use sandbox
 	if sandbox {
-		baseUrl = "https://api.sandbox.coinbase.com/v1/"
+		baseUrl = "https://api.sandbox.coinbase.com/v1/" // Sandbox Url
 	}
 	a := clientOAuthAuthentication{
 		Tokens:  tokens,

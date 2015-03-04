@@ -22,7 +22,7 @@ type apiKeyAuthentication struct {
 func apiKeyAuthWithEnv(key string, secret string, sandbox bool) *apiKeyAuthentication {
 	baseUrl := "https://api.coinbase.com/v1/" // Live Url
 	
-	// check if should use sandbox
+	// Check if should use sandbox
 	if sandbox {
 		baseUrl = "https://api.sandbox.coinbase.com/v1/" // Sandbox Url
 	}

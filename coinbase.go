@@ -42,6 +42,16 @@ func apiKeyClientTest(key string, secret string) Client {
 	return c
 }
 
+func ApiKeyClientSandbox(key string, secret string) Client {
+	c := Client{
+		rpc: rpc{
+			auth: apiKeyAuthSandbox(key, secret),
+			mock: false,
+		},
+	}
+	return c
+}
+
 // Get sends a GET request and marshals response data into holder
 func (c Client) Get(path string, params interface{}, holder interface{}) error {
 	return c.rpc.Request("GET", path, params, &holder)

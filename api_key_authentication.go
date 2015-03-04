@@ -33,6 +33,21 @@ func apiKeyAuth(key string, secret string) *apiKeyAuthentication {
 	return &a
 }
 
+// ApiKeyAuth instantiates ApiKeyAuthentication with the API key & secret
+func apiKeyAuthSandbox(key string, secret string) *apiKeyAuthentication {
+	a := apiKeyAuthentication{
+		Key:     key,
+		Secret:  secret,
+		BaseUrl: "https://api.sandbox.coinbase.com/v1/",
+		Client: http.Client{
+			Transport: &http.Transport{
+				Dial: dialTimeout,
+			},
+		},
+	}
+	return &a
+}
+
 // API Key + Secret authentication requires a request header of the HMAC SHA-256
 // signature of the "message" as well as an incrementing nonce and the API key
 func (a apiKeyAuthentication) authenticate(req *http.Request, endpoint string, params []byte) error {

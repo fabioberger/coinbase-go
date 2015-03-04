@@ -23,7 +23,7 @@ func initClient() Client {
 // Endpoint tests do not include tests that could be run an arbitrary amount of times
 // i.e buy, sell, etc...
 
-func TestGetBalanceEndpoint(t *testing.T) {
+func TestEndpointGetBalance(t *testing.T) {
 	c := initClient()
 	amount, err := c.GetBalance()
 	if err != nil {
@@ -32,7 +32,7 @@ func TestGetBalanceEndpoint(t *testing.T) {
 	assert.IsType(t, 1.1, amount)
 }
 
-func TestGetReceiveAddressEndpoint(t *testing.T) {
+func TestEndpointGetReceiveAddress(t *testing.T) {
 	t.Skip("Skipping GetReceiveAddressEndpoint in order not to create excessive amounts of receive addresses during testing.")
 	c := initClient()
 	params := &AddressParams{
@@ -46,7 +46,7 @@ func TestGetReceiveAddressEndpoint(t *testing.T) {
 	assert.IsType(t, "string", address)
 }
 
-func TestGetAllAddressesEndpoint(t *testing.T) {
+func TestEndpointGetAllAddresses(t *testing.T) {
 	c := initClient()
 	params := &AddressesParams{
 		Page:  1,
@@ -60,7 +60,7 @@ func TestGetAllAddressesEndpoint(t *testing.T) {
 	assert.IsType(t, "string", addresses.Addresses[0].Address)
 }
 
-func TestCreateButtonEndpoint(t *testing.T) {
+func TestEndpointCreateButton(t *testing.T) {
 	c := initClient()
 	params := &Button{
 		Name:             "test",
@@ -85,7 +85,7 @@ func TestCreateButtonEndpoint(t *testing.T) {
 	assert.IsType(t, "string", data.Type)
 }
 
-func TestGetCurrencies(t *testing.T) {
+func TestEndpointGetCurrencies(t *testing.T) {
 	c := initClient()
 	data, err := c.GetCurrencies()
 	if err != nil {
@@ -94,7 +94,7 @@ func TestGetCurrencies(t *testing.T) {
 	assert.IsType(t, "string", data[0].Name)
 }
 
-func TestGetExchangeRatesEndpoint(t *testing.T) {
+func TestEndpointGetExchangeRates(t *testing.T) {
 	c := initClient()
 	data, err := c.GetExchangeRates()
 	if err != nil {
@@ -103,7 +103,7 @@ func TestGetExchangeRatesEndpoint(t *testing.T) {
 	assert.IsType(t, "string", data["btc_to_usd"])
 }
 
-func TestGetExchangeRateEndpoint(t *testing.T) {
+func TestEndpointGetExchangeRate(t *testing.T) {
 	c := initClient()
 	data, err := c.GetExchangeRate("btc", "usd")
 	if err != nil {
@@ -112,7 +112,7 @@ func TestGetExchangeRateEndpoint(t *testing.T) {
 	assert.IsType(t, 0.0, data)
 }
 
-func TestGetTransactionsEndpoint(t *testing.T) {
+func TestEndpointGetTransactions(t *testing.T) {
 	c := initClient()
 	data, err := c.GetTransactions(1)
 	if err != nil {
@@ -122,7 +122,7 @@ func TestGetTransactionsEndpoint(t *testing.T) {
 	assert.IsType(t, "string", data.Transactions[0].Hsh)
 }
 
-func TestGetBuyPriceEndpoint(t *testing.T) {
+func TestEndpointGetBuyPrice(t *testing.T) {
 	c := initClient()
 	data, err := c.GetBuyPrice(1)
 	if err != nil {
@@ -132,7 +132,7 @@ func TestGetBuyPriceEndpoint(t *testing.T) {
 	assert.IsType(t, "string", data.Total.Amount)
 }
 
-func TestGetSellPriceEndpoint(t *testing.T) {
+func TestEndpointGetSellPrice(t *testing.T) {
 	c := initClient()
 	data, err := c.GetSellPrice(1)
 	if err != nil {
@@ -142,7 +142,7 @@ func TestGetSellPriceEndpoint(t *testing.T) {
 	assert.IsType(t, "string", data.Total.Amount)
 }
 
-func TestGetTransactionEndpoint(t *testing.T) {
+func TestEndpointGetTransaction(t *testing.T) {
 	c := initClient()
 	_, err := c.GetTransaction("5446968682a19ab940000004")
 	if err != nil {

@@ -18,12 +18,18 @@ type apiKeyAuthentication struct {
 	Client  http.Client
 }
 
-// ApiKeyAuth instantiates ApiKeyAuthentication with the API key & secret
-func apiKeyAuth(key string, secret string) *apiKeyAuthentication {
+// ApiKeyAuthWithEnv instantiates ApiKeyAuthentication with the API key & secret & environment (Live or Sandbox)
+func apiKeyAuthWithEnv(key string, secret string, sandbox bool) *apiKeyAuthentication {
+	baseUrl := "https://api.coinbase.com/v1/" // Live Url
+	
+	// Check if should use sandbox
+	if sandbox {
+		baseUrl = "https://api.sandbox.coinbase.com/v1/" // Sandbox Url
+	}
 	a := apiKeyAuthentication{
 		Key:     key,
 		Secret:  secret,
-		BaseUrl: "https://api.coinbase.com/v1/",
+		BaseUrl: baseUrl,
 		Client: http.Client{
 			Transport: &http.Transport{
 				Dial: dialTimeout,
@@ -31,6 +37,12 @@ func apiKeyAuth(key string, secret string) *apiKeyAuthentication {
 		},
 	}
 	return &a
+}
+
+// ApiKeyAuth instantiates ApiKeyAuthentication with the API key & secret
+// TODO: Maybe remove this (not sure if it would break backwards compatability)
+func apiKeyAuth(key string, secret string) *apiKeyAuthentication {
+	return apiKeyAuthWithEnv(key, secret, false)
 }
 
 // API Key + Secret authentication requires a request header of the HMAC SHA-256

@@ -503,9 +503,24 @@ In order to run the tests for this library, you will first need to install the T
  go get github.com/stretchr/testify/assert
  ```
 
-Then run the tests by executing the following in your command line:
+Then run all tests by executing the following in your command line:
 
  	go test . -v
+
+
+For environment specific test use :
+
+Endpoint(Live) :
+
+	go test . -v -test.run=TestEndpoint
+
+Sandbox :
+
+	go test . -v -test.run=TestSandbox
+
+Mock :
+
+	go test . -v -test.run=TestMock
 
 
 

@@ -18,7 +18,7 @@ func initTestClient() Client {
 // the file are compared with the expected value given the marshaling of the JSON
 // executed correctly.
 
-func TestGetBalanceParse(t *testing.T) {
+func TestMockGetBalanceParse(t *testing.T) {
 	c := initTestClient()
 	amount, err := c.GetBalance()
 	if err != nil {
@@ -27,7 +27,7 @@ func TestGetBalanceParse(t *testing.T) {
 	compareFloat(t, "GetBalanceParse", 36.62800000, amount)
 }
 
-func TestGetReceiveAddressParse(t *testing.T) {
+func TestMockGetReceiveAddressParse(t *testing.T) {
 	c := initTestClient()
 	params := &AddressParams{}
 	address, err := c.GenerateReceiveAddress(params)
@@ -37,7 +37,7 @@ func TestGetReceiveAddressParse(t *testing.T) {
 	compareString(t, "GetReceiveAddressParse", "muVu2JZo8PbewBHRp6bpqFvVD87qvqEHWA", address)
 }
 
-func TestGetAllAddressesParse(t *testing.T) {
+func TestMockGetAllAddressesParse(t *testing.T) {
 	c := initTestClient()
 	params := &AddressesParams{}
 	addresses, err := c.GetAllAddresses(params)
@@ -49,7 +49,7 @@ func TestGetAllAddressesParse(t *testing.T) {
 	compareInt(t, "GetAllAddressesParse", 1, int64(addresses.NumPages))
 }
 
-func TestCreateButtonParse(t *testing.T) {
+func TestMockCreateButtonParse(t *testing.T) {
 	c := initTestClient()
 	params := &Button{}
 	data, err := c.CreateButton(params)
@@ -60,7 +60,7 @@ func TestCreateButtonParse(t *testing.T) {
 	compareString(t, "CreateButtonParse", "Sample description", data.Description)
 }
 
-func TestSendMoneyParse(t *testing.T) {
+func TestMockSendMoneyParse(t *testing.T) {
 	c := initTestClient()
 	params := &TransactionParams{}
 	data, err := c.SendMoney(params)
@@ -71,7 +71,7 @@ func TestSendMoneyParse(t *testing.T) {
 	compareString(t, "SendMoneyParse", "37muSN5ZrukVTvyVh3mT5Zc5ew9L9CBare", data.Transaction.RecipientAddress)
 }
 
-func TestRequestMoneyParse(t *testing.T) {
+func TestMockRequestMoneyParse(t *testing.T) {
 	c := initTestClient()
 	params := &TransactionParams{}
 	data, err := c.RequestMoney(params)
@@ -82,7 +82,7 @@ func TestRequestMoneyParse(t *testing.T) {
 	compareString(t, "RequestMoneyParse", "5011f33df8182b142400000e", data.Transaction.Recipient.Id)
 }
 
-func TestResendRequestParse(t *testing.T) {
+func TestMockResendRequestParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.ResendRequest("ID")
 	if err != nil {
@@ -91,7 +91,7 @@ func TestResendRequestParse(t *testing.T) {
 	compareBool(t, "ResendRequestParse", true, data)
 }
 
-func TestCancelRequestParse(t *testing.T) {
+func TestMockCancelRequestParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.CancelRequest("ID")
 	if err != nil {
@@ -100,7 +100,7 @@ func TestCancelRequestParse(t *testing.T) {
 	compareBool(t, "CancelRequestParse", false, data)
 }
 
-func TestCompleteRequestParse(t *testing.T) {
+func TestMockCompleteRequestParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.CompleteRequest("ID")
 	if err != nil {
@@ -109,7 +109,7 @@ func TestCompleteRequestParse(t *testing.T) {
 	compareString(t, "CancelRequestParse", "503c46a3f8182b106500009b", data.Transaction.Id)
 }
 
-func TestCreateOrderFromButtonCodeParse(t *testing.T) {
+func TestMockCreateOrderFromButtonCodeParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.CreateOrderFromButtonCode("ID")
 	if err != nil {
@@ -119,7 +119,7 @@ func TestCreateOrderFromButtonCodeParse(t *testing.T) {
 	compareString(t, "CreateOrderFromButtonCodeParse", "new", data.Status)
 }
 
-func TestCreateUserParse(t *testing.T) {
+func TestMockCreateUserParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.CreateUser("test@email.com", "password")
 	if err != nil {
@@ -129,7 +129,7 @@ func TestCreateUserParse(t *testing.T) {
 	compareString(t, "CreateUser", "501a3d22f8182b2754000011", data.Id)
 }
 
-func TestBuyParse(t *testing.T) {
+func TestMockBuyParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.Buy(1000.0, true)
 	if err != nil {
@@ -140,7 +140,7 @@ func TestBuyParse(t *testing.T) {
 	compareString(t, "Buys", "13.55", data.Subtotal.Amount)
 }
 
-func TestSellParse(t *testing.T) {
+func TestMockSellParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.Sell(1000.0)
 	if err != nil {
@@ -151,7 +151,7 @@ func TestSellParse(t *testing.T) {
 	compareString(t, "Sells", "13.50", data.Subtotal.Amount)
 }
 
-func TestGetContactsParse(t *testing.T) {
+func TestMockGetContactsParse(t *testing.T) {
 	c := initTestClient()
 	params := &ContactsParams{
 		Page:  1,
@@ -164,7 +164,7 @@ func TestGetContactsParse(t *testing.T) {
 	compareString(t, "GetContacts", "user1@example.com", data.Emails[0])
 }
 
-func TestGetTransactionsParse(t *testing.T) {
+func TestMockGetTransactionsParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.GetTransactions(1)
 	if err != nil {
@@ -175,7 +175,7 @@ func TestGetTransactionsParse(t *testing.T) {
 	compareString(t, "GetTransactions", "-1.00000000", data.Transactions[1].Amount.Amount)
 }
 
-func TestGetOrdersParse(t *testing.T) {
+func TestMockGetOrdersParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.GetOrders(1)
 	if err != nil {
@@ -185,7 +185,7 @@ func TestGetOrdersParse(t *testing.T) {
 	compareInt(t, "GetOrders", int64(0), int64(data.Orders[0].Transaction.Confirmations))
 }
 
-func TestGetTransfersParse(t *testing.T) {
+func TestMockGetTransfersParse(t *testing.T) {
 	c := initTestClient()
 	data, err := c.GetTransfers(1)
 	if err != nil {
@@ -195,7 +195,7 @@ func TestGetTransfersParse(t *testing.T) {
 	compareInt(t, "GetTransfers", int64(1), int64(data.NumPages))
 }
 
-func TestGetTransaction(t *testing.T) {
+func TestMockGetTransaction(t *testing.T) {
 	c := initTestClient()
 	data, err := c.GetTransaction("ID")
 	if err != nil {
@@ -206,7 +206,7 @@ func TestGetTransaction(t *testing.T) {
 	compareString(t, "GetTransaction", "User One", data.Recipient.Name)
 }
 
-func TestGetOrder(t *testing.T) {
+func TestMockGetOrder(t *testing.T) {
 	c := initTestClient()
 	data, err := c.GetOrder("ID")
 	if err != nil {
@@ -217,7 +217,7 @@ func TestGetOrder(t *testing.T) {
 	compareString(t, "GetTransaction", "test", data.Button.Name)
 }
 
-func TestGetUser(t *testing.T) {
+func TestMockGetUser(t *testing.T) {
 	c := initTestClient()
 	data, err := c.GetUser()
 	if err != nil {

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"time"
+
+	"github.com/fabioberger/coinbase-go/config"
 )
 
 // ClientOAuthAuthentication Struct implements the Authentication interface
@@ -17,20 +19,9 @@ type clientOAuthAuthentication struct {
 
 // ClientOAuth instantiates ClientOAuthAuthentication with the client OAuth tokens
 func clientOAuth(tokens *oauthTokens) *clientOAuthAuthentication {
-	return clientOAuthWithEnv(tokens, false)
-}
-
-// ClientOAuthWithEnv instantiates ClientOAuthAuthentication with the client OAuth tokens and the specified environment
-func clientOAuthWithEnv(tokens *oauthTokens, sandbox bool) *clientOAuthAuthentication {
-	baseUrl := "https://api.coinbase.com/v1/" // Live Url
-	
-	// Check if should use sandbox
-	if sandbox {
-		baseUrl = "https://api.sandbox.coinbase.com/v1/" // Sandbox Url
-	}
 	a := clientOAuthAuthentication{
 		Tokens:  tokens,
-		BaseUrl: baseUrl,
+		BaseUrl: config.BaseUrl,
 		Client: http.Client{
 			Transport: &http.Transport{
 				Dial: dialTimeout,

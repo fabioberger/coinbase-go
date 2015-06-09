@@ -508,20 +508,20 @@ Then run all tests by executing the following in your command line:
  	go test . -v
 
 
-For environment specific test use :
+To run either only the endpoint or mock tests, use the below commands:
 
 Endpoint(Live) :
 
 	go test . -v -test.run=TestEndpoint
 
-Sandbox :
-
-	go test . -v -test.run=TestSandbox
-
 Mock :
 
 	go test . -v -test.run=TestMock
 
+If you would like to use the sandbox testnet instead of the live API endpoint, edit the "sandbox" variable in the config package to "true":
 
+```
+Sandbox = true
+```
 
 

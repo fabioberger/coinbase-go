@@ -16,18 +16,7 @@ type Client struct {
 func ApiKeyClient(key string, secret string) Client {
 	c := Client{
 		rpc: rpc{
-			auth: apiKeyAuthWithEnv(key, secret, false),
-			mock: false,
-		},
-	}
-	return c
-}
-
-// ApiKeyClientSandbox instantiates the client with ApiKey Authentication for Coinbase Sandbox
-func ApiKeyClientSandbox(key string, secret string) Client {
-	c := Client{
-		rpc: rpc{
-			auth: apiKeyAuthWithEnv(key, secret, true),
+			auth: apiKeyAuth(key, secret),
 			mock: false,
 		},
 	}
@@ -38,18 +27,7 @@ func ApiKeyClientSandbox(key string, secret string) Client {
 func OAuthClient(tokens *oauthTokens) Client {
 	c := Client{
 		rpc: rpc{
-			auth: clientOAuthWithEnv(tokens, false),
-			mock: false,
-		},
-	}
-	return c
-}
-
-// OAuthClientSandbox instantiates the client with OAuth Authentication for Coinbase Sandbox
-func OAuthClientSandbox(tokens *oauthTokens) Client {
-	c := Client{
-		rpc: rpc{
-			auth: clientOAuthWithEnv(tokens, true),
+			auth: clientOAuth(tokens),
 			mock: false,
 		},
 	}

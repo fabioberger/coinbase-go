@@ -41,8 +41,8 @@ type ContactsParams struct {
 	Query string `json:"query,omitempty"`
 }
 
-// The OAuth Tokens Struct returned from OAuth Authentication
-type oauthTokens struct {
+// OauthTokens the OAuth Tokens Struct returned from OAuth Authentication
+type OauthTokens struct {
 	AccessToken  string
 	RefreshToken string
 	ExpireTime   int64

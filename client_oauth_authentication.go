@@ -12,13 +12,13 @@ import (
 // and takes care of authenticating OAuth RPC requests on behalf of a client
 // (i.e GetBalance())
 type clientOAuthAuthentication struct {
-	Tokens  *oauthTokens
+	Tokens  *OauthTokens
 	BaseUrl string
 	Client  http.Client
 }
 
 // ClientOAuth instantiates ClientOAuthAuthentication with the client OAuth tokens
-func clientOAuth(tokens *oauthTokens) *clientOAuthAuthentication {
+func clientOAuth(tokens *OauthTokens) *clientOAuthAuthentication {
 	a := clientOAuthAuthentication{
 		Tokens:  tokens,
 		BaseUrl: config.BaseUrl,

@@ -24,7 +24,7 @@ func ApiKeyClient(key string, secret string) Client {
 }
 
 // OAuthClient instantiates the client with OAuth Authentication
-func OAuthClient(tokens *oauthTokens) Client {
+func OAuthClient(tokens *OauthTokens) Client {
 	c := Client{
 		rpc: rpc{
 			auth: clientOAuth(tokens),

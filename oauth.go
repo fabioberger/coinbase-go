@@ -52,26 +52,26 @@ func (o OAuth) CreateAuthorizeUrl(scope []string) string {
 }
 
 // RefreshTokens refreshes a users existing OAuth tokens
-func (o OAuth) RefreshTokens(oldTokens map[string]interface{}) (*oauthTokens, error) {
+func (o OAuth) RefreshTokens(oldTokens map[string]interface{}) (*OauthTokens, error) {
 	refresh_token := oldTokens["refresh_token"].(string)
 	return o.GetTokens(refresh_token, "refresh_token")
 }
 
 // NewTokens generates new tokens for an OAuth user
-func (o OAuth) NewTokens(code string) (*oauthTokens, error) {
+func (o OAuth) NewTokens(code string) (*OauthTokens, error) {
 	return o.GetTokens(code, "authorization_code")
 }
 
 // NewTokensRequest generates new tokens for OAuth user given an http request
 // containing the query parameter 'code'
-func (o OAuth) NewTokensFromRequest(req *http.Request) (*oauthTokens, error) {
+func (o OAuth) NewTokensFromRequest(req *http.Request) (*OauthTokens, error) {
 	query := req.URL.Query()
 	code := query.Get("code")
 	return o.GetTokens(code, "authorization_code")
 }
 
 // GetTokens gets tokens for an OAuth user specifying a grantType (i.e authorization_code)
-func (o OAuth) GetTokens(code string, grantType string) (*oauthTokens, error) {
+func (o OAuth) GetTokens(code string, grantType string) (*OauthTokens, error) {
 
 	postVars := map[string]string{
 		"grant_type":    grantType,
@@ -91,7 +91,7 @@ func (o OAuth) GetTokens(code string, grantType string) (*oauthTokens, error) {
 		return nil, err
 	}
 
-	tokens := oauthTokens{
+	tokens := OauthTokens{
 		AccessToken:  holder.AccessToken,
 		RefreshToken: holder.RefreshToken,
 		ExpireTime:   time.Now().UTC().Unix() + holder.ExpiresIn,

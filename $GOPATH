@@ -1,0 +1,2 @@
+export GOPATH="path/to/your/go/folder"
+go get github.com/fabioberger/coinbase-go
